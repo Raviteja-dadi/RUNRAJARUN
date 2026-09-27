@@ -1,0 +1,7 @@
+{
+  "name": "Run Raja Run - Ancient Temple Odyssey",
+  "description": "An endless 3D Temple Run style odyssey starring the Indian King. Run, jump, slide, and steer through ancient ruins!",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

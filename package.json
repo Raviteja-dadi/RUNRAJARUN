@@ -1,0 +1,16 @@
+{
+  "name": "run-raja-run",
+  "version": "1.0.0",
+  "description": "Run Raja Run - Ancient Temple Odyssey",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'No build step required'",
+    "lint": "echo 'No lint step required'"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
