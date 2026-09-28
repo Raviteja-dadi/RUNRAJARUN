@@ -1,0 +1,312 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "Root user database entity storing user stats, high score, coins, and multiplier.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "User display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Avatar URL"
+        },
+        "totalGold": {
+          "type": "number",
+          "description": "Total gold coins"
+        },
+        "highScore": {
+          "type": "number",
+          "description": "Highest run score"
+        },
+        "totalDistance": {
+          "type": "number",
+          "description": "Total distance traveled in meters"
+        },
+        "totalRuns": {
+          "type": "number",
+          "description": "Total runs completed"
+        },
+        "missionMultiplier": {
+          "type": "number",
+          "description": "Permanent multiplier boost"
+        },
+        "achievementsCount": {
+          "type": "number",
+          "description": "Number of unlocked achievements"
+        },
+        "claimedDays": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Claimed login reward days"
+        },
+        "lastClaimDate": {
+          "type": "string",
+          "description": "Date of last reward claim"
+        },
+        "isAnonymous": {
+          "type": "boolean",
+          "description": "Whether profile is guest anonymous"
+        },
+        "databaseCreatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this user database was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last sync timestamp"
+        }
+      },
+      "required": ["totalGold", "highScore"]
+    },
+    "friends": {
+      "title": "User Friend",
+      "description": "A friend entry in /users/{userId}/friends/{friendId}",
+      "type": "object",
+      "properties": {
+        "friendId": {
+          "type": "string",
+          "description": "Unique user ID of the friend"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Friend's display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Friend's avatar URL or emoji"
+        },
+        "highScore": {
+          "type": "number",
+          "description": "Friend's high score"
+        },
+        "totalGold": {
+          "type": "number",
+          "description": "Friend's total gold coins"
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when friend was added"
+        }
+      },
+      "required": ["friendId", "displayName"]
+    },
+    "chats": {
+      "title": "Chat Room",
+      "description": "Direct message chat room metadata in /chats/{chatId}",
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string",
+          "description": "Unique chat room identifier"
+        },
+        "participantIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of user IDs in this conversation"
+        },
+        "lastMessage": {
+          "type": "string",
+          "description": "Snippet of last message sent"
+        },
+        "lastSenderId": {
+          "type": "string",
+          "description": "User ID of last sender"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last activity"
+        }
+      },
+      "required": ["participantIds"]
+    },
+    "messages": {
+      "title": "Chat Message",
+      "description": "Individual message in /chats/{chatId}/messages/{messageId}",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "description": "Sender user ID"
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Sender display name"
+        },
+        "senderPhoto": {
+          "type": "string",
+          "description": "Sender avatar URL or icon"
+        },
+        "text": {
+          "type": "string",
+          "description": "Message text content"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["text", "score_brag", "challenge", "emote"],
+          "description": "Type of message"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp message was created"
+        }
+      },
+      "required": ["senderId", "senderName", "text"]
+    },
+    "global_messages": {
+      "title": "Global Tavern Message",
+      "description": "Live real-time community chat message in /global_chat/{channelId}/messages/{messageId}",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "description": "Sender user ID"
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Sender display name"
+        },
+        "senderPhoto": {
+          "type": "string",
+          "description": "Sender avatar URL"
+        },
+        "text": {
+          "type": "string",
+          "description": "Message text content"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["text", "score_brag", "challenge", "emote"],
+          "description": "Message classification"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the message"
+        }
+      },
+      "required": ["senderId", "senderName", "text"]
+    },
+    "runs": {
+      "title": "User Run History",
+      "description": "Individual run log in user database subcollection /users/{userId}/runs/{runId}",
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string",
+          "description": "Unique run ID"
+        },
+        "score": {
+          "type": "number",
+          "description": "Run score"
+        },
+        "coins": {
+          "type": "number",
+          "description": "Coins collected in this run"
+        },
+        "distance": {
+          "type": "number",
+          "description": "Distance in meters"
+        },
+        "causeOfDeath": {
+          "type": "string",
+          "description": "Obstacle that caused crash"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Run completion time"
+        }
+      },
+      "required": ["score", "coins", "distance"]
+    },
+    "wardrobe": {
+      "title": "User Wardrobe Customization",
+      "description": "Customized character colors in /users/{userId}/wardrobe/config",
+      "type": "object",
+      "properties": {
+        "turban": {
+          "type": "string",
+          "description": "Hex color code for turban"
+        },
+        "shirt": {
+          "type": "string",
+          "description": "Hex color code for kurta/shirt"
+        },
+        "dhoti": {
+          "type": "string",
+          "description": "Hex color code for dhoti"
+        },
+        "shoes": {
+          "type": "string",
+          "description": "Hex color code for shoes"
+        },
+        "skin": {
+          "type": "string",
+          "description": "Hex color code for skin tone"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Wardrobe update timestamp"
+        }
+      },
+      "required": ["turban", "shirt", "dhoti", "shoes", "skin"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/users"
+      },
+      "description": "Individual user database root profile"
+    },
+    "/users/{userId}/friends/{friendId}": {
+      "schema": {
+        "$ref": "#/entities/friends"
+      },
+      "description": "List of friends added by user"
+    },
+    "/users/{userId}/runs/{runId}": {
+      "schema": {
+        "$ref": "#/entities/runs"
+      },
+      "description": "Run session logs recorded in user database"
+    },
+    "/users/{userId}/wardrobe/{configId}": {
+      "schema": {
+        "$ref": "#/entities/wardrobe"
+      },
+      "description": "Player outfit customization saved in user database"
+    },
+    "/chats/{chatId}": {
+      "schema": {
+        "$ref": "#/entities/chats"
+      },
+      "description": "Direct message chat room metadata between friends"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/messages"
+      },
+      "description": "Real-time message collection in direct chat room"
+    },
+    "/global_chat/{channelId}/messages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/global_messages"
+      },
+      "description": "Live real-time community runner chat tavern"
+    }
+  }
+}
