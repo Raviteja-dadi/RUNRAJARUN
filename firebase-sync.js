@@ -24,15 +24,15 @@ import {
     onSnapshot
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// Firebase configuration provisioned for southern-diode-sn56p
+// Firebase configuration provisioned for raviteja--dadi
 const firebaseConfig = {
-    projectId: "southern-diode-sn56p",
-    appId: "1:1003937958503:web:5d41359ed54f7721ce22c2",
-    apiKey: "AIzaSyByLsc8sohun3LqM2BD3F-Yf2aVk_QpDcY",
-    authDomain: "southern-diode-sn56p.firebaseapp.com",
-    firestoreDatabaseId: "ai-studio-runrajarun-5a9a3cd1-829d-48b0-8a45-0dec7e9b2826",
-    storageBucket: "southern-diode-sn56p.firebasestorage.app",
-    messagingSenderId: "1003937958503"
+    apiKey: "AIzaSyD0-UegDsgzUl6mfUiLFZUXCFs30wZbfoo",
+    authDomain: "raviteja--dadi.firebaseapp.com",
+    databaseURL: "https://raviteja--dadi-default-rtdb.firebaseio.com",
+    projectId: "raviteja--dadi",
+    storageBucket: "raviteja--dadi.firebasestorage.app",
+    messagingSenderId: "1041331396864",
+    appId: "1:1041331396864:web:3013490094bc799d3dd3e5"
 };
 
 // Standardized error handler adhering to Firebase skill
@@ -58,8 +58,8 @@ let app, auth, db;
 try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-    console.log("🔥 Firebase initialized with Firestore DB:", firebaseConfig.firestoreDatabaseId);
+    db = firebaseConfig.firestoreDatabaseId ? getFirestore(app, firebaseConfig.firestoreDatabaseId) : getFirestore(app);
+    console.log("🔥 Firebase initialized with Project ID:", firebaseConfig.projectId);
 
     // Initial server connection test
     (async () => {
@@ -532,12 +532,24 @@ export async function sendDirectMessage(friendId, text, type = 'text') {
         }, { merge: true });
 
         // Add message
+        const settings = getChatSettings();
+        let messageText = trimmedText;
+        if (settings.profanityFilter) {
+            const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'bastard'];
+            badWords.forEach(w => {
+                const reg = new RegExp(w, 'gi');
+                messageText = messageText.replace(reg, '***');
+            });
+        }
+
+        const senderDisplayName = settings.customHandle || currentUser.displayName || (currentUser.isAnonymous ? 'Royal Guest' : 'Ancient Champion');
+
         const messagesRef = collection(db, 'chats', chatId, 'messages');
         await addDoc(messagesRef, {
             senderId: currentUser.uid,
-            senderName: currentUser.displayName || (currentUser.isAnonymous ? 'Royal Guest' : 'Ancient Champion'),
+            senderName: senderDisplayName,
             senderPhoto: currentUser.photoURL || '',
-            text: trimmedText,
+            text: messageText,
             type: type,
             createdAt: new Date().toISOString()
         });
@@ -594,18 +606,64 @@ export async function sendGlobalChatMessage(text, type = 'text') {
     const path = 'global_chat/tavern/messages';
 
     try {
+        const settings = getChatSettings();
+        let messageText = trimmedText;
+        if (settings.profanityFilter) {
+            const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'bastard'];
+            badWords.forEach(w => {
+                const reg = new RegExp(w, 'gi');
+                messageText = messageText.replace(reg, '***');
+            });
+        }
+
+        const senderDisplayName = settings.customHandle || currentUser.displayName || (currentUser.isAnonymous ? 'Royal Guest' : 'Ancient Champion');
+
         const messagesRef = collection(db, 'global_chat', 'tavern', 'messages');
         await addDoc(messagesRef, {
             senderId: currentUser.uid,
-            senderName: currentUser.displayName || (currentUser.isAnonymous ? 'Royal Guest' : 'Ancient Champion'),
+            senderName: senderDisplayName,
             senderPhoto: currentUser.photoURL || '',
-            text: trimmedText,
+            text: messageText,
             type: type,
             createdAt: new Date().toISOString()
         });
         console.log("💬 Global message posted:", trimmedText);
     } catch (err) {
         handleFirestoreError(err, 'write', path);
+    }
+}
+
+// ==========================================
+// ⚙️ CHAT SETTINGS MANAGEMENT
+// ==========================================
+export function getChatSettings() {
+    const defaults = {
+        soundChimes: true,
+        enterToSend: true,
+        profanityFilter: true,
+        customHandle: '',
+        fullScreenMode: false
+    };
+    try {
+        const stored = localStorage.getItem('runrajarun_chat_settings');
+        if (stored) {
+            return { ...defaults, ...JSON.parse(stored) };
+        }
+    } catch (e) {
+        console.error("Error loading chat settings:", e);
+    }
+    return defaults;
+}
+
+export function saveChatSettings(settings) {
+    try {
+        const current = getChatSettings();
+        const merged = { ...current, ...settings };
+        localStorage.setItem('runrajarun_chat_settings', JSON.stringify(merged));
+        return merged;
+    } catch (e) {
+        console.error("Error saving chat settings:", e);
+        return settings;
     }
 }
 
@@ -631,5 +689,7 @@ window.FirebaseSync = {
     listenToDirectChat,
     sendDirectMessage,
     listenToGlobalChat,
-    sendGlobalChatMessage
+    sendGlobalChatMessage,
+    getChatSettings,
+    saveChatSettings
 };
