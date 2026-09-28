@@ -284,38 +284,20 @@
             <div class="flex-1 pointer-events-none"></div>
 
             <!-- Primary Actions Center Block -->
-            <div class="w-full max-w-md pointer-events-auto space-y-2 mb-8">
+            <div class="w-full max-w-md pointer-events-auto space-y-2.5 mb-12">
                 <button id="btn-play" class="w-full bg-gradient-to-r from-amber-500 via-orange-600 to-red-600 hover:from-amber-600 hover:to-red-700 text-white font-extrabold text-xl py-3.5 md:py-4 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 neon-shadow-amber uppercase border border-amber-400/40">
                     START MAJESTIC RUN 👑
                 </button>
 
-                <button id="btn-customizer" class="w-full bg-gradient-to-r from-amber-600/30 via-orange-600/25 to-amber-700/30 hover:from-amber-600/50 hover:to-orange-600/40 text-amber-300 border border-amber-500/50 hover:border-amber-400 font-extrabold text-xs md:text-sm py-2.5 rounded-xl orbitron tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10 backdrop-blur-md">
+                <button id="btn-customizer" class="w-full bg-gradient-to-r from-amber-600/30 via-orange-600/25 to-amber-700/30 hover:from-amber-600/50 hover:to-orange-600/40 text-amber-300 border border-amber-500/50 hover:border-amber-400 font-extrabold text-xs md:text-sm py-3 rounded-xl orbitron tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10 backdrop-blur-md">
                     <span>👘 ROYAL WARDROBE & TURBAN</span>
                 </button>
 
-                <!-- Dedicated Feature Buttons Grid -->
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="btn-menu-streak" class="bg-stone-900/85 hover:bg-amber-950/40 text-amber-300 border border-amber-500/40 hover:border-amber-400 font-bold text-xs py-2.5 px-3 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-1.5 shadow-md">
-                        <span>📆 STREAK</span>
-                        <span id="menu-streak-badge" class="hidden bg-red-600 text-white text-[7px] px-1 py-0.2 rounded-full font-black animate-pulse">!</span>
-                    </button>
+                <button id="btn-preview" class="w-full bg-stone-900/80 hover:bg-amber-500/10 text-amber-400 border border-amber-500/40 hover:border-amber-400 font-extrabold text-xs py-2.5 md:py-3 rounded-xl orbitron tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-2">
+                    <span>🎬 PREVIEW: TEMPLE SWEEP</span>
+                </button>
 
-                    <button id="btn-menu-missions" class="bg-stone-900/85 hover:bg-amber-950/40 text-yellow-300 border border-yellow-500/40 hover:border-yellow-400 font-bold text-xs py-2.5 px-3 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-1.5 shadow-md">
-                        <span>📅 MISSIONS</span>
-                        <span id="menu-missions-badge" class="hidden bg-red-600 text-white text-[7px] px-1 py-0.2 rounded-full font-black animate-pulse">!</span>
-                    </button>
-
-                    <button id="btn-menu-manual" class="bg-stone-900/85 hover:bg-stone-800 text-stone-300 hover:text-white border border-white/10 hover:border-white/20 font-bold text-xs py-2.5 px-3 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-1.5 shadow-md">
-                        <span>📜 HOW TO PLAY</span>
-                    </button>
-
-                    <button id="btn-preview" class="bg-stone-900/85 hover:bg-stone-800 text-amber-400 border border-amber-500/30 hover:border-amber-400 font-bold text-xs py-2.5 px-3 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-1.5 shadow-md">
-                        <span>🎬 PREVIEW</span>
-                    </button>
-                </div>
-
-                <!-- Dedicated Studio Credits Button -->
-                <button id="btn-info" class="w-full bg-stone-950/80 hover:bg-stone-900 text-stone-400 hover:text-amber-400 border border-white/10 hover:border-amber-500/40 font-bold text-[11px] py-2 rounded-xl orbitron tracking-widest transition-all transform hover:scale-[1.01] active:scale-95 uppercase flex items-center justify-center gap-2">
+                <button id="btn-info" class="w-full bg-stone-900/80 hover:bg-amber-500/10 text-yellow-400 border border-yellow-500/40 hover:border-yellow-400 font-extrabold text-xs py-2.5 md:py-3 rounded-xl orbitron tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 uppercase flex items-center justify-center gap-2">
                     <span>🏢 STUDIO CREDITS</span>
                 </button>
             </div>
@@ -605,216 +587,50 @@
     <!-- MAIN GAME CANVAS -->
     <canvas id="gameCanvas" class="absolute inset-0 w-full h-full z-0"></canvas>
 
-    <!-- ======================================================== -->
-    <!-- DEDICATED SEPARATE FEATURE MODALS (CLEAN & NON-BUNDLED)   -->
-    <!-- ======================================================== -->
-
-    <!-- 1. DEDICATED FRIENDS & REAL-TIME CHAT MODAL (WITH FULLSCREEN & SETTINGS) -->
-    <div id="modal-friends" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div id="modal-friends-card" class="modal-card max-w-xl w-[92%] h-[600px] max-h-[92vh] border border-emerald-500/40 bg-stone-950/95 rounded-2xl p-4 md:p-6 shadow-2xl shadow-emerald-500/10 transform scale-95 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+    <!-- STUDIO INFO MODAL PANEL -->
+    <div id="info-modal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
+        <div class="max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col">
             
-            <!-- Top Controls Bar -->
-            <div class="flex items-center justify-between border-b border-emerald-500/20 pb-3 mb-2 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">💬</span>
-                    <div>
-                        <h3 class="text-sm md:text-base font-black orbitron uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-300">
-                            FRIENDS & REAL-TIME CHAT
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">Live Multiplayer Tavern & Direct Messaging</span>
-                    </div>
-                </div>
-
-                <!-- Action Controls: Fullscreen & Settings & Close -->
-                <div class="flex items-center gap-1.5">
-                    <button id="btn-chat-settings-toggle" class="bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-white/10 px-2.5 py-1.5 rounded-xl text-xs font-bold orbitron transition-all active:scale-95 flex items-center gap-1" title="Chat Settings">
-                        <span>⚙️</span> <span class="hidden sm:inline text-[10px]">SETTINGS</span>
-                    </button>
-                    <button id="btn-chat-fullscreen" class="bg-stone-900 hover:bg-stone-800 text-emerald-300 hover:text-emerald-200 border border-emerald-500/30 px-2.5 py-1.5 rounded-xl text-xs font-bold orbitron transition-all active:scale-95 flex items-center gap-1" title="Toggle Full Screen Mode">
-                        <span id="chat-fullscreen-icon">⛶</span> <span id="chat-fullscreen-text" class="hidden sm:inline text-[10px]">FULLSCREEN</span>
-                    </button>
-                    <button id="btn-close-friends" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95 ml-1" title="Close Chat">
-                        ✕
-                    </button>
-                </div>
-            </div>
-
-            <!-- Expandable Chat Settings Drawer -->
-            <div id="chat-settings-drawer" class="hidden bg-stone-900/95 border border-emerald-500/30 rounded-xl p-3 mb-2 shrink-0 space-y-2.5 text-xs text-stone-300">
-                <div class="flex items-center justify-between border-b border-white/10 pb-1.5">
-                    <span class="font-black orbitron text-emerald-400 text-[11px] uppercase tracking-wide">⚙️ CHAT PREFERENCES</span>
-                    <button id="btn-close-chat-settings" class="text-stone-400 hover:text-white text-xs">✕</button>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                    <label class="flex items-center justify-between bg-black/40 p-2 rounded-lg border border-white/5 cursor-pointer">
-                        <span>🔔 Sound Chime on Messages</span>
-                        <input id="setting-sound-chimes" type="checkbox" class="accent-emerald-500 w-4 h-4 cursor-pointer" checked>
-                    </label>
-
-                    <label class="flex items-center justify-between bg-black/40 p-2 rounded-lg border border-white/5 cursor-pointer">
-                        <span>⚡ Press Enter to Send</span>
-                        <input id="setting-enter-send" type="checkbox" class="accent-emerald-500 w-4 h-4 cursor-pointer" checked>
-                    </label>
-
-                    <label class="flex items-center justify-between bg-black/40 p-2 rounded-lg border border-white/5 cursor-pointer">
-                        <span>🛡️ Safe Language Filter</span>
-                        <input id="setting-safe-filter" type="checkbox" class="accent-emerald-500 w-4 h-4 cursor-pointer" checked>
-                    </label>
-
-                    <div class="flex items-center gap-1.5 bg-black/40 p-1.5 rounded-lg border border-white/5">
-                        <input id="setting-chat-name" type="text" placeholder="Custom Chat Name" maxlength="25" class="bg-stone-950 border border-white/10 rounded px-2 py-1 text-xs text-white flex-1 focus:outline-none focus:border-emerald-400">
-                        <button id="btn-save-chat-name" class="bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold px-2 py-1 rounded text-[10px] uppercase orbitron">Save</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Chat Body -->
-            <div id="modal-content-friends" class="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <!-- Rendered dynamically by renderFriendsAndChatModal() -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. DEDICATED GLOBAL LEADERBOARD & DAILY TOP 5 MODAL -->
-    <div id="modal-leaderboard" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🏆</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">
-                            ROYAL RANKINGS
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">Daily Top 5 & Global Hall of Fame</span>
-                    </div>
-                </div>
-                <button id="btn-close-leaderboard" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
+            <!-- Interactive Tabs -->
+            <div class="flex overflow-x-auto border-b border-amber-500/20 mb-4 text-[8px] md:text-xs font-bold uppercase tracking-wider orbitron scrollbar-none gap-1">
+                <button id="tab-gameplay" class="px-2 pb-2 border-b-2 border-amber-500 text-amber-400 focus:outline-none transition-all duration-300 whitespace-nowrap">
+                    📜 MANUAL
+                </button>
+                <button id="tab-friends" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-1">
+                    💬 FRIENDS & CHAT
+                </button>
+                <button id="tab-streak" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-1">
+                    📆 STREAK <span id="tab-streak-badge" class="hidden bg-red-600 text-white text-[7px] px-1 py-0.2 rounded-full font-black animate-pulse">!</span>
+                </button>
+                <button id="tab-missions" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-1">
+                    📅 MISSIONS <span id="tab-missions-badge" class="hidden bg-red-600 text-white text-[7px] px-1 py-0.2 rounded-full font-black animate-pulse">!</span>
+                </button>
+                <button id="tab-sync" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-1">
+                    ☁️ SYNC
+                </button>
+                <button id="tab-leaderboard" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-1">
+                    🏆 RANKINGS
+                </button>
+                <button id="tab-studio" class="px-2 pb-2 border-b-2 border-transparent text-stone-500 hover:text-stone-300 focus:outline-none transition-all duration-300 whitespace-nowrap">
+                    🏢 STUDIO
                 </button>
             </div>
 
-            <div id="modal-content-leaderboard" class="space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
-                <!-- Populated dynamically by renderLeaderboardModal() -->
+            <!-- Tab Friends & Real-Time Chat -->
+            <div id="modal-content-friends" class="space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[380px] overflow-y-auto pr-2 hidden">
+                <!-- Populated dynamically by renderFriendsAndChatModal() -->
             </div>
-        </div>
-    </div>
 
-    <!-- 3. DEDICATED DAILY LOGIN STREAK MODAL -->
-    <div id="modal-streak" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">📆</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-amber-400">
-                            DAILY LOGIN STREAK
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">7-Day Covenant Rewards & Multipliers</span>
-                    </div>
+            <!-- Tab 1: Royal Chariot & Temple Survival Guide -->
+            <div id="modal-content-gameplay" class="space-y-4 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
+                <div class="text-center mb-3">
+                    <span class="text-amber-500 font-extrabold uppercase tracking-[0.25em] text-[10px] orbitron mb-1 block">Royal Expedition Guide</span>
+                    <h3 class="text-2xl font-black orbitron uppercase tracking-wide text-white">
+                        SACRED CHARIOTS & SURVIVAL
+                    </h3>
+                    <div class="w-12 h-[1px] bg-amber-500/30 mx-auto mt-2"></div>
                 </div>
-                <button id="btn-close-streak" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
-                </button>
-            </div>
-
-            <div id="modal-content-streak" class="space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
-                <p class="text-center text-stone-400 text-xs italic">
-                    "Return consecutive days to gain massive Dynasty Gold rewards and claim your Day 7 Multiplier Jackpot!"
-                </p>
-
-                <!-- Daily Streak Calendar Grid -->
-                <div id="streak-calendar-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-                    <!-- Populated dynamically by renderStreakModal() -->
-                </div>
-
-                <!-- Claim Button Area -->
-                <div class="flex flex-col items-center justify-center gap-2 pt-3">
-                    <button id="btn-claim-streak" class="hidden w-full bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-stone-950 font-black text-sm py-2.5 rounded-xl orbitron tracking-wider shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all uppercase animate-pulse">
-                        CLAIM TODAY'S REWARD 🎁
-                    </button>
-                    <p id="streak-status-text" class="text-[10px] text-stone-500 font-bold orbitron uppercase tracking-wide">
-                        Check-in completed for today!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. DEDICATED DAILY MISSIONS MODAL -->
-    <div id="modal-missions" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">📅</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-white">
-                            DAILY MISSIONS
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">Bounties & Score Multiplier Boosts</span>
-                    </div>
-                </div>
-                <button id="btn-close-missions" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
-                </button>
-            </div>
-
-            <div id="modal-content-missions" class="space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
-                <p class="text-center text-stone-400 text-xs italic">
-                    "Complete daily objectives to unlock high-value gold payouts and permanent Dynasty multiplier boosts!"
-                </p>
-
-                <!-- Dynamic Missions List Container -->
-                <div id="missions-list-container" class="space-y-3 pt-1">
-                    <!-- Populated dynamically by renderMissionsModal() -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. DEDICATED CLOUD SYNC & ACCOUNT MODAL -->
-    <div id="modal-sync" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">☁️</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-amber-400">
-                            CLOUD SYNC & ACCOUNT
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">Cross-Device Progress & Firebase Profile</span>
-                    </div>
-                </div>
-                <button id="btn-close-sync" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
-                </button>
-            </div>
-
-            <div id="modal-content-sync" class="space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
-                <!-- Populated dynamically by renderSyncModal() -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. DEDICATED HOW TO PLAY & SURVIVAL GUIDE MODAL -->
-    <div id="modal-manual" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">📜</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-white">
-                            SACRED CHARIOTS & SURVIVAL
-                        </h3>
-                        <span class="text-[9px] text-amber-400 font-medium">Royal Expedition Guide & Mechanics</span>
-                    </div>
-                </div>
-                <button id="btn-close-manual" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
-                </button>
-            </div>
-
-            <div id="modal-content-gameplay" class="space-y-4 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
+                
                 <p class="text-stone-400 text-center italic text-xs leading-normal">
                     "Colossal sacred chariots are not just obstacles — they are core mechanics that dictate your movement, scoring strategy, and survival."
                 </p>
@@ -860,30 +676,74 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- 7. DEDICATED STUDIO CREDITS MODAL (STRICTLY CREDITS & PORTFOLIO) -->
-    <div id="modal-studio" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-auto">
-        <div class="modal-card max-w-lg w-[90%] border border-amber-500/40 bg-stone-950/95 rounded-2xl p-5 md:p-7 shadow-2xl shadow-amber-500/10 transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🏢</span>
-                    <div>
-                        <h3 class="text-base font-black orbitron uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">
-                            STUDIO PORTFOLIO & CREDITS
-                        </h3>
-                        <span class="text-[9px] text-stone-400 font-medium">Architecture, Engine & Creator Details</span>
-                    </div>
+
+
+            <!-- Tab 5: Daily Login Streak -->
+            <div id="modal-content-streak" class="hidden space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
+                <div class="text-center mb-2">
+                    <span class="text-amber-500 font-extrabold uppercase tracking-[0.25em] text-[10px] orbitron mb-1 block">Dynasty Covenant</span>
+                    <h3 class="text-2xl font-black orbitron uppercase tracking-wide text-white">
+                        DAILY LOGIN STREAK
+                    </h3>
+                    <div class="w-12 h-[1px] bg-amber-500/30 mx-auto mt-2"></div>
                 </div>
-                <button id="btn-close-studio" class="bg-stone-900 hover:bg-red-950 text-stone-400 hover:text-red-300 border border-white/10 hover:border-red-500/40 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs transition-all active:scale-95">
-                    ✕
-                </button>
+
+                <p class="text-center text-stone-400 text-xs italic">
+                    "Return consecutive days to gain massive Dynasty Gold rewards and claim your Day 7 Multiplier Jackpot!"
+                </p>
+
+                <!-- Daily Streak Calendar Grid -->
+                <div id="streak-calendar-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                    <!-- Populated dynamically by renderStreakModal() -->
+                </div>
+
+                <!-- Claim Button Area -->
+                <div class="flex flex-col items-center justify-center gap-2 pt-3">
+                    <button id="btn-claim-streak" class="hidden w-full bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-stone-950 font-black text-sm py-2.5 rounded-xl orbitron tracking-wider shadow-lg hover:shadow-amber-500/20 active:scale-95 transition-all uppercase animate-pulse">
+                        CLAIM TODAY'S REWARD 🎁
+                    </button>
+                    <p id="streak-status-text" class="text-[10px] text-stone-500 font-bold orbitron uppercase tracking-wide">
+                        Check-in completed for today!
+                    </p>
+                </div>
             </div>
 
-            <div id="modal-content-studio" class="space-y-4 text-stone-300 text-xs md:text-sm leading-relaxed overflow-y-auto pr-1 flex-1 custom-scroll">
+            <!-- Tab 4: Daily Missions -->
+            <div id="modal-content-missions" class="hidden space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
                 <div class="text-center mb-2">
-                    <h3 class="text-xl md:text-2xl font-black orbitron uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                    <span class="text-amber-500 font-extrabold uppercase tracking-[0.25em] text-[10px] orbitron mb-1 block">Royal Bounties</span>
+                    <h3 class="text-2xl font-black orbitron uppercase tracking-wide text-white">
+                        DAILY MISSIONS
+                    </h3>
+                    <div class="w-12 h-[1px] bg-amber-500/30 mx-auto mt-2"></div>
+                </div>
+
+                <p class="text-center text-stone-400 text-xs italic">
+                    "Complete daily objectives to unlock high-value gold payouts and permanent Dynasty multiplier boosts!"
+                </p>
+
+                <!-- Dynamic Missions List Container -->
+                <div id="missions-list-container" class="space-y-3 pt-1">
+                    <!-- Populated dynamically by renderMissionsModal() -->
+                </div>
+            </div>
+
+            <!-- Tab 4: Firebase Cloud Sync -->
+            <div id="modal-content-sync" class="hidden space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
+                <!-- Populated dynamically by renderSyncModal() -->
+            </div>
+
+            <!-- Tab 5: Global Leaderboard Rankings -->
+            <div id="modal-content-leaderboard" class="hidden space-y-3.5 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
+                <!-- Populated dynamically by renderLeaderboardModal() -->
+            </div>
+
+            <!-- Tab 6: Studio Portfolio (Existing content) -->
+            <div id="modal-content-studio" class="hidden space-y-4 text-stone-300 text-xs md:text-sm leading-relaxed max-h-[350px] overflow-y-auto pr-2">
+                <div class="text-center mb-3">
+                    <span class="text-amber-500 font-extrabold uppercase tracking-[0.25em] text-[10px] orbitron mb-1 block">STUDIO PORTFOLIO</span>
+                    <h3 class="text-2xl font-black orbitron uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
                         RAVITEJA TECHNOLOGIES
                     </h3>
                     <div class="w-12 h-[1px] bg-amber-500/30 mx-auto mt-2"></div>
@@ -927,12 +787,15 @@
                             <span class="font-semibold uppercase tracking-wider text-amber-500/80">Official Portals</span>
                             <a href="https://ravitejatech.com" target="_blank" class="text-amber-400 hover:text-amber-300 transition-colors underline font-bold">ravitejatech.com</a>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="font-semibold uppercase tracking-wider text-amber-500/80">Copyright</span>
-                            <span class="text-stone-300">© 2026 Raviteja Dadi. All Rights Reserved.</span>
-                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Footer Action Button -->
+            <div class="mt-5 border-t border-amber-500/10 pt-4">
+                <button id="btn-close-info" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold py-3 rounded-xl orbitron tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 shadow-md uppercase">
+                    RETURN TO COURT 👑
+                </button>
             </div>
         </div>
     </div>
@@ -5366,7 +5229,7 @@
                     </div>
 
                     <!-- Messages Stream Box -->
-                    <div id="tavern-messages-box" class="flex-1 min-h-[220px] max-h-[60vh] overflow-y-auto pr-1 space-y-2.5 custom-scroll bg-black/50 border border-white/10 rounded-xl p-3">
+                    <div id="tavern-messages-box" class="h-[200px] overflow-y-auto pr-1 space-y-2.5 custom-scroll bg-black/50 border border-white/10 rounded-xl p-3">
                         <div class="text-center py-6 text-stone-500 text-xs orbitron animate-pulse">
                             Connecting to Royal Tavern stream...
                         </div>
@@ -5399,7 +5262,6 @@
 
                 // Set up live listener for Tavern messages
                 const msgBox = container.querySelector('#tavern-messages-box');
-                let prevTavernMsgCount = 0;
                 if (window.FirebaseSync && typeof window.FirebaseSync.listenToGlobalChat === 'function') {
                     globalChatUnsub = window.FirebaseSync.listenToGlobalChat((messages) => {
                         if (!msgBox) return;
@@ -5411,23 +5273,10 @@
                                     <p class="text-emerald-400 text-[10px]">Be the first to speak to your fellow runners!</p>
                                 </div>
                             `;
-                            prevTavernMsgCount = 0;
                             return;
                         }
 
                         const currentUid = (window.FirebaseSync.currentUser ? window.FirebaseSync.currentUser.uid : null);
-
-                        // Sound chime on new message from others
-                        if (messages.length > prevTavernMsgCount && prevTavernMsgCount > 0) {
-                            const lastMsg = messages[messages.length - 1];
-                            if (lastMsg && lastMsg.senderId !== currentUid) {
-                                const settings = window.FirebaseSync?.getChatSettings?.() || { soundChimes: true };
-                                if (settings.soundChimes && audio && typeof audio.playCoin === 'function') {
-                                    audio.playCoin();
-                                }
-                            }
-                        }
-                        prevTavernMsgCount = messages.length;
 
                         msgBox.innerHTML = messages.map(m => {
                             const isMe = (currentUid && currentUid === m.senderId);
@@ -5472,13 +5321,7 @@
                 if (btnSend && inputMsg) {
                     btnSend.addEventListener('click', doSendTavern);
                     inputMsg.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            const settings = window.FirebaseSync?.getChatSettings?.() || { enterToSend: true };
-                            if (settings.enterToSend) {
-                                e.preventDefault();
-                                doSendTavern();
-                            }
-                        }
+                        if (e.key === 'Enter') doSendTavern();
                     });
                 }
 
@@ -5604,7 +5447,7 @@
                     </div>
 
                     <!-- Direct Messages Stream -->
-                    <div id="direct-messages-box" class="flex-1 min-h-[220px] max-h-[60vh] overflow-y-auto pr-1 space-y-2.5 custom-scroll bg-black/50 border border-white/10 rounded-xl p-3">
+                    <div id="direct-messages-box" class="h-[210px] overflow-y-auto pr-1 space-y-2.5 custom-scroll bg-black/50 border border-white/10 rounded-xl p-3">
                         <div class="text-center py-6 text-stone-500 text-xs orbitron animate-pulse">
                             Loading private conversation...
                         </div>
@@ -5639,7 +5482,6 @@
 
                 // Listen to Direct Chat stream
                 const directBox = container.querySelector('#direct-messages-box');
-                let prevDirectMsgCount = 0;
                 if (window.FirebaseSync && typeof window.FirebaseSync.listenToDirectChat === 'function') {
                     directChatUnsub = window.FirebaseSync.listenToDirectChat(currentDirectFriend.id, (messages) => {
                         if (!directBox) return;
@@ -5651,23 +5493,10 @@
                                     <p class="text-emerald-400 text-[10px]">Send a hello or challenge them to beat your run!</p>
                                 </div>
                             `;
-                            prevDirectMsgCount = 0;
                             return;
                         }
 
                         const currentUid = (window.FirebaseSync.currentUser ? window.FirebaseSync.currentUser.uid : null);
-
-                        // Sound chime on new direct message
-                        if (messages.length > prevDirectMsgCount && prevDirectMsgCount > 0) {
-                            const lastMsg = messages[messages.length - 1];
-                            if (lastMsg && lastMsg.senderId !== currentUid) {
-                                const settings = window.FirebaseSync?.getChatSettings?.() || { soundChimes: true };
-                                if (settings.soundChimes && audio && typeof audio.playCoin === 'function') {
-                                    audio.playCoin();
-                                }
-                            }
-                        }
-                        prevDirectMsgCount = messages.length;
 
                         directBox.innerHTML = messages.map(m => {
                             const isMe = (currentUid && currentUid === m.senderId);
@@ -5706,13 +5535,7 @@
                 if (btnSendDirect && inputDirect) {
                     btnSendDirect.addEventListener('click', doSendDirect);
                     inputDirect.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            const settings = window.FirebaseSync?.getChatSettings?.() || { enterToSend: true };
-                            if (settings.enterToSend) {
-                                e.preventDefault();
-                                doSendDirect();
-                            }
-                        }
+                        if (e.key === 'Enter') doSendDirect();
                     });
                 }
 
@@ -6336,251 +6159,63 @@
             }
         };
 
-        // =========================================================================
-        // DEDICATED SEPARATE MODAL ENGINE (NON-BUNDLED & INDIVIDUAL PANELS)
-        // =========================================================================
-        const MODAL_MAP = {
-            'friends': document.getElementById('modal-friends'),
-            'leaderboard': document.getElementById('modal-leaderboard'),
-            'streak': document.getElementById('modal-streak'),
-            'missions': document.getElementById('modal-missions'),
-            'achievements': document.getElementById('modal-missions'),
-            'sync': document.getElementById('modal-sync'),
-            'manual': document.getElementById('modal-manual'),
-            'gameplay': document.getElementById('modal-manual'),
-            'studio': document.getElementById('modal-studio')
-        };
-
-        function openDedicatedModal(modalKey) {
-            audio.playCoin();
-            closeAllModals(false);
-
-            if (gameState === STATE_PLAYING) {
-                previousGameState = gameState;
-                gameState = STATE_PAUSED;
-                stopInstrumentalMusic();
-            }
-
-            const modal = MODAL_MAP[modalKey];
-            if (!modal) return;
-
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                const card = modal.querySelector('.modal-card') || modal.querySelector('div');
-                if (card) {
-                    card.classList.remove('scale-95');
-                    card.classList.add('scale-100');
-                }
-            }, 30);
-
-            // Render specific modal content
-            if (modalKey === 'friends') {
-                renderFriendsAndChatModal();
-                loadChatSettingsUI();
-            } else if (modalKey === 'leaderboard') {
-                renderLeaderboardModal();
-            } else if (modalKey === 'streak') {
-                renderStreakModal();
-            } else if (modalKey === 'missions' || modalKey === 'achievements') {
-                renderMissionsModal();
-            } else if (modalKey === 'sync') {
-                renderSyncModal();
+        function openModalWithTab(tabName) {
+            switchModalTab(tabName);
+            if (infoModal) {
+                infoModal.classList.remove('hidden');
+                setTimeout(() => {
+                    infoModal.classList.remove('opacity-0');
+                    infoModal.querySelector('div').classList.remove('scale-95');
+                    infoModal.querySelector('div').classList.add('scale-100');
+                }, 50);
             }
         }
 
-        function closeDedicatedModal(modalKey) {
-            audio.playCoin();
-            const modal = MODAL_MAP[modalKey];
-            if (!modal) return;
-
-            if (modalKey === 'friends') {
-                if (globalChatUnsub) { globalChatUnsub(); globalChatUnsub = null; }
-                if (directChatUnsub) { directChatUnsub(); directChatUnsub = null; }
-            }
-
-            modal.classList.add('opacity-0');
-            const card = modal.querySelector('.modal-card') || modal.querySelector('div');
-            if (card) {
-                card.classList.remove('scale-100');
-                card.classList.add('scale-95');
-            }
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                if (previousGameState === STATE_PLAYING && gameState === STATE_PAUSED) {
-                    gameState = STATE_PLAYING;
-                    startInstrumentalMusic();
-                    previousGameState = null;
-                }
-            }, 300);
+        if (infoBtn) {
+            infoBtn.addEventListener('click', () => openModalWithTab('studio'));
         }
-
-        function closeAllModals(resumeGame = true) {
-            Object.keys(MODAL_MAP).forEach(k => {
-                const m = MODAL_MAP[k];
-                if (m && !m.classList.contains('hidden')) {
-                    m.classList.add('opacity-0');
-                    const card = m.querySelector('.modal-card') || m.querySelector('div');
-                    if (card) {
-                        card.classList.remove('scale-100');
-                        card.classList.add('scale-95');
-                    }
-                    setTimeout(() => m.classList.add('hidden'), 300);
-                }
-            });
-
-            if (globalChatUnsub) { globalChatUnsub(); globalChatUnsub = null; }
-            if (directChatUnsub) { directChatUnsub(); directChatUnsub = null; }
-
-            if (resumeGame && previousGameState === STATE_PLAYING && gameState === STATE_PAUSED) {
-                gameState = STATE_PLAYING;
-                startInstrumentalMusic();
-                previousGameState = null;
-            }
-        }
-
-        window.openModalWithTab = openDedicatedModal;
-
-        // =========================================================================
-        // FULLSCREEN CHAT & CHAT SETTINGS CONTROLLER
-        // =========================================================================
-        let isChatFullscreen = false;
-
-        function toggleChatFullscreen(forceVal = null) {
-            isChatFullscreen = (forceVal !== null) ? forceVal : !isChatFullscreen;
-            const friendsCard = document.getElementById('modal-friends-card');
-            const iconEl = document.getElementById('chat-fullscreen-icon');
-            const textEl = document.getElementById('chat-fullscreen-text');
-
-            if (!friendsCard) return;
-
-            if (isChatFullscreen) {
-                friendsCard.classList.remove('max-w-xl', 'w-[92%]', 'h-[600px]', 'max-h-[92vh]', 'rounded-2xl');
-                friendsCard.classList.add('w-full', 'h-full', 'max-w-none', 'max-h-none', 'rounded-none', 'border-0');
-                if (iconEl) iconEl.textContent = '🗗';
-                if (textEl) textEl.textContent = 'MINIMIZE';
-            } else {
-                friendsCard.classList.remove('w-full', 'h-full', 'max-w-none', 'max-h-none', 'rounded-none', 'border-0');
-                friendsCard.classList.add('max-w-xl', 'w-[92%]', 'h-[600px]', 'max-h-[92vh]', 'rounded-2xl');
-                if (iconEl) iconEl.textContent = '⛶';
-                if (textEl) textEl.textContent = 'FULLSCREEN';
-            }
-
-            if (window.FirebaseSync && typeof window.FirebaseSync.saveChatSettings === 'function') {
-                window.FirebaseSync.saveChatSettings({ fullScreenMode: isChatFullscreen });
-            }
-
-            const msgBox = document.getElementById('tavern-messages-box') || document.getElementById('direct-messages-box');
-            if (msgBox) {
-                setTimeout(() => { msgBox.scrollTop = msgBox.scrollHeight; }, 100);
-            }
-        }
-
-        function loadChatSettingsUI() {
-            if (!window.FirebaseSync || typeof window.FirebaseSync.getChatSettings !== 'function') return;
-            const settings = window.FirebaseSync.getChatSettings();
-            const chimesEl = document.getElementById('setting-sound-chimes');
-            const enterEl = document.getElementById('setting-enter-send');
-            const filterEl = document.getElementById('setting-safe-filter');
-            const nameEl = document.getElementById('setting-chat-name');
-
-            if (chimesEl) chimesEl.checked = !!settings.soundChimes;
-            if (enterEl) enterEl.checked = !!settings.enterToSend;
-            if (filterEl) filterEl.checked = !!settings.profanityFilter;
-            if (nameEl) nameEl.value = settings.customHandle || '';
-
-            if (settings.fullScreenMode && !isChatFullscreen) {
-                toggleChatFullscreen(true);
-            }
-        }
-
-        // Chat Settings and Fullscreen Button Bindings
-        document.getElementById('btn-chat-fullscreen')?.addEventListener('click', () => {
-            audio.playCoin();
-            toggleChatFullscreen();
-        });
-
-        document.getElementById('btn-chat-settings-toggle')?.addEventListener('click', () => {
-            audio.playCoin();
-            const drawer = document.getElementById('chat-settings-drawer');
-            if (drawer) {
-                drawer.classList.toggle('hidden');
-                loadChatSettingsUI();
-            }
-        });
-
-        document.getElementById('btn-close-chat-settings')?.addEventListener('click', () => {
-            document.getElementById('chat-settings-drawer')?.classList.add('hidden');
-        });
-
-        document.getElementById('setting-sound-chimes')?.addEventListener('change', (e) => {
-            window.FirebaseSync?.saveChatSettings({ soundChimes: e.target.checked });
-        });
-
-        document.getElementById('setting-enter-send')?.addEventListener('change', (e) => {
-            window.FirebaseSync?.saveChatSettings({ enterToSend: e.target.checked });
-        });
-
-        document.getElementById('setting-safe-filter')?.addEventListener('change', (e) => {
-            window.FirebaseSync?.saveChatSettings({ profanityFilter: e.target.checked });
-        });
-
-        document.getElementById('btn-save-chat-name')?.addEventListener('click', () => {
-            const val = document.getElementById('setting-chat-name')?.value.trim();
-            window.FirebaseSync?.saveChatSettings({ customHandle: val });
-            audio.playCoin();
-            triggerAlert("👑 Custom chat handle saved!");
-        });
-
-        // Close Buttons for Dedicated Modals
-        document.getElementById('btn-close-friends')?.addEventListener('click', () => closeDedicatedModal('friends'));
-        document.getElementById('btn-close-leaderboard')?.addEventListener('click', () => closeDedicatedModal('leaderboard'));
-        document.getElementById('btn-close-streak')?.addEventListener('click', () => closeDedicatedModal('streak'));
-        document.getElementById('btn-close-missions')?.addEventListener('click', () => closeDedicatedModal('missions'));
-        document.getElementById('btn-close-sync')?.addEventListener('click', () => closeDedicatedModal('sync'));
-        document.getElementById('btn-close-manual')?.addEventListener('click', () => closeDedicatedModal('manual'));
-        document.getElementById('btn-close-studio')?.addEventListener('click', () => closeDedicatedModal('studio'));
-
-        // Main Menu Dedicated Feature Buttons
-        document.getElementById('btn-friends-header')?.addEventListener('click', () => openDedicatedModal('friends'));
-        document.getElementById('btn-sync-badge')?.addEventListener('click', () => openDedicatedModal('sync'));
-        document.getElementById('btn-leaderboard')?.addEventListener('click', () => openDedicatedModal('leaderboard'));
-        document.getElementById('btn-menu-streak')?.addEventListener('click', () => openDedicatedModal('streak'));
-        document.getElementById('btn-menu-missions')?.addEventListener('click', () => openDedicatedModal('missions'));
-        document.getElementById('btn-menu-manual')?.addEventListener('click', () => openDedicatedModal('manual'));
-        document.getElementById('btn-info')?.addEventListener('click', () => openDedicatedModal('studio'));
 
         if (btnDailyMissionsMenu) {
-            btnDailyMissionsMenu.addEventListener('click', () => openDedicatedModal('missions'));
+            btnDailyMissionsMenu.addEventListener('click', () => openModalWithTab('missions'));
         }
 
         if (btnAchievementsMenu) {
-            btnAchievementsMenu.addEventListener('click', () => openDedicatedModal('achievements'));
+            btnAchievementsMenu.addEventListener('click', () => openModalWithTab('achievements'));
         }
 
         if (btnAchievementsGo) {
-            btnAchievementsGo.addEventListener('click', () => openDedicatedModal('achievements'));
+            btnAchievementsGo.addEventListener('click', () => openModalWithTab('achievements'));
         }
 
         if (btnHudAchievements) {
             btnHudAchievements.addEventListener('click', (e) => {
                 e.stopPropagation();
-                openDedicatedModal('achievements');
+                // Pause game if currently running and open achievements modal
+                if (gameState === STATE_PLAYING) {
+                    previousGameState = gameState;
+                    gameState = STATE_PAUSED;
+                    stopInstrumentalMusic();
+                }
+                openModalWithTab('achievements');
             });
         }
 
-        // Backdrop click to close modals
-        ['modal-friends', 'modal-leaderboard', 'modal-streak', 'modal-missions', 'modal-sync', 'modal-manual', 'modal-studio'].forEach(modalId => {
-            const el = document.getElementById(modalId);
-            if (el) {
-                el.addEventListener('click', (e) => {
-                    if (e.target === el) {
-                        closeAllModals(true);
+        if (infoCloseBtn && infoModal) {
+            infoCloseBtn.addEventListener('click', () => {
+                audio.playCoin(); // soft chime on exit
+                infoModal.classList.add('opacity-0');
+                infoModal.querySelector('div').classList.remove('scale-100');
+                infoModal.querySelector('div').classList.add('scale-95');
+                setTimeout(() => {
+                    infoModal.classList.add('hidden');
+                    if (previousGameState === STATE_PLAYING && gameState === STATE_PAUSED) {
+                        gameState = STATE_PLAYING;
+                        startInstrumentalMusic();
+                        previousGameState = null;
                     }
-                });
-            }
-        });
+                }, 300);
+            });
+        }
 
         // Fullscreen Cinematic Temple Preview Screen handlers
         if (previewBtn) {
