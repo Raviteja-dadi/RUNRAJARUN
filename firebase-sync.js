@@ -33,7 +33,7 @@ const firebaseConfig = {
     storageBucket: "raviteja--dadi.firebasestorage.app",
     messagingSenderId: "1041331396864",
     appId: "1:1041331396864:web:3013490094bc799d3dd3e5",
-    firestoreDatabaseId: "ai-studio-runrajarun-5a9a3cd1-829d-48b0-8a45-0dec7e9b2826"
+    firestoreDatabaseId: "runrajarun-18.vercel.app"
 };
 
 // Standardized error handler adhering to Firebase skill
