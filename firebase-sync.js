@@ -24,15 +24,16 @@ import {
     onSnapshot
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// Firebase configuration provisioned for southern-diode-sn56p
+// Firebase configuration provisioned for raviteja--dadi
 const firebaseConfig = {
-    projectId: "southern-diode-sn56p",
-    appId: "1:1003937958503:web:5d41359ed54f7721ce22c2",
-    apiKey: "AIzaSyByLsc8sohun3LqM2BD3F-Yf2aVk_QpDcY",
-    authDomain: "southern-diode-sn56p.firebaseapp.com",
-    firestoreDatabaseId: "ai-studio-runrajarun-5a9a3cd1-829d-48b0-8a45-0dec7e9b2826",
-    storageBucket: "southern-diode-sn56p.firebasestorage.app",
-    messagingSenderId: "1003937958503"
+    apiKey: "AIzaSyD0-UegDsgzUl6mfUiLFZUXCFs30wZbfoo",
+    authDomain: "raviteja--dadi.firebaseapp.com",
+    databaseURL: "https://raviteja--dadi-default-rtdb.firebaseio.com",
+    projectId: "raviteja--dadi",
+    storageBucket: "raviteja--dadi.firebasestorage.app",
+    messagingSenderId: "1041331396864",
+    appId: "1:1041331396864:web:3013490094bc799d3dd3e5",
+    firestoreDatabaseId: "ai-studio-runrajarun-5a9a3cd1-829d-48b0-8a45-0dec7e9b2826"
 };
 
 // Standardized error handler adhering to Firebase skill
@@ -58,8 +59,13 @@ let app, auth, db;
 try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-    console.log("🔥 Firebase initialized with Firestore DB:", firebaseConfig.firestoreDatabaseId);
+    try {
+        db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+    } catch (e) {
+        console.warn("Firestore custom DB ID fallback to default:", e);
+        db = getFirestore(app);
+    }
+    console.log("🔥 Firebase initialized for project:", firebaseConfig.projectId);
 
     // Initial server connection test
     (async () => {
@@ -239,7 +245,17 @@ export async function loginWithGoogle() {
         console.log('✅ Google sign-in successful:', result.user.displayName);
         return result.user;
     } catch (err) {
-        console.error('Google Sign-In Error:', err);
+        console.warn('Google Sign-In Notice:', err.code || err.message);
+        if (err.code === 'auth/unauthorized-domain') {
+            try {
+                const guestResult = await signInAnonymously(auth);
+                console.log('✅ Guest fallback sign-in successful:', guestResult.user.uid);
+                err.fallbackUser = guestResult.user;
+            } catch (fallbackErr) {
+                console.warn('Guest fallback info:', fallbackErr.code || fallbackErr.message);
+                err.fallbackError = fallbackErr;
+            }
+        }
         throw err;
     }
 }
@@ -252,7 +268,7 @@ export async function loginAnonymouslyUser() {
         console.log('✅ Anonymous sign-in successful:', result.user.uid);
         return result.user;
     } catch (err) {
-        console.error('Anonymous Sign-In Error:', err);
+        console.warn('Anonymous Sign-In Notice:', err.code || err.message);
         throw err;
     }
 }
@@ -611,6 +627,10 @@ export async function sendGlobalChatMessage(text, type = 'text') {
 
 // Expose on window object
 window.FirebaseSync = {
+    app,
+    auth,
+    get db() { return db; },
+    firebaseConfig,
     get currentUser() { return currentUser; },
     getLocalProgress,
     saveLocalProgress,

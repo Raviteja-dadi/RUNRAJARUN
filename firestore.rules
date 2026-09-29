@@ -60,14 +60,26 @@ service cloud.firestore {
     }
 
     // Global Tavern Runner Community Chat
+    match /global_chat/{channelId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
     match /global_chat/{channelId}/messages/{messageId} {
       allow read: if true;
-      allow create: if isSignedIn() && 
-        request.resource.data.senderId == request.auth.uid &&
+      allow create: if (
+          (isSignedIn() && request.resource.data.senderId == request.auth.uid) ||
+          (!isSignedIn() && request.resource.data.senderId is string && request.resource.data.senderId.size() > 0)
+        ) &&
         request.resource.data.text is string &&
         request.resource.data.text.size() > 0 &&
         request.resource.data.text.size() <= 1000;
       allow update, delete: if isSignedIn() && resource.data.senderId == request.auth.uid;
+    }
+
+    // Health check test connection path
+    match /test/{testId} {
+      allow read: if true;
     }
   }
 }
