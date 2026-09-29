@@ -238,7 +238,9 @@ if (auth) {
 
 // Sign-In with Google
 export async function loginWithGoogle() {
-    if (!auth) return;
+    if (!auth) {
+        throw new Error("Firebase Authentication is not initialized. Please verify your API key and enable Google Sign-In in your Firebase Console (Authentication ➔ Sign-in method).");
+    }
     try {
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
@@ -262,7 +264,9 @@ export async function loginWithGoogle() {
 
 // Anonymous Guest Sign-In
 export async function loginAnonymouslyUser() {
-    if (!auth) return;
+    if (!auth) {
+        throw new Error("Firebase Authentication is not initialized. Please verify your API key and enable Anonymous Sign-In in your Firebase Console (Authentication ➔ Sign-in method).");
+    }
     try {
         const result = await signInAnonymously(auth);
         console.log('✅ Anonymous sign-in successful:', result.user.uid);

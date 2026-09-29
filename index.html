@@ -823,18 +823,6 @@
                         </div>
                     </div>
 
-                    <!-- Project 3: runrajarun-18.vercel.app -->
-                    <div class="flex gap-3">
-                        <span class="text-amber-400 font-bold text-sm">🎮</span>
-                        <div class="min-w-0 flex-1">
-                            <strong class="text-white uppercase font-bold text-[11px] orbitron tracking-wider block truncate">Run Raja Run (runrajarun-18.vercel.app)</strong>
-                            <p class="text-[11px] text-stone-400 mt-0.5 leading-relaxed">
-                                An alternative high-speed production deployment of this Run Raja Run: Ancient Temple Odyssey, serving as the official stable portal alternative of the AI Studio preview environment.
-                            </p>
-                            <a href="https://runrajarun-18.vercel.app" target="_blank" class="text-amber-400 hover:text-amber-300 text-[10px] font-bold underline transition-colors orbitron mt-1 block">Visit runrajarun-18.vercel.app ➜</a>
-                        </div>
-                    </div>
-
                     <!-- Enterprise Engineering Capability -->
                     <div class="flex gap-3">
                         <span class="text-amber-400 font-bold text-sm">🌐</span>
@@ -5814,6 +5802,8 @@
             }
         }
 
+        let lastSyncError = null;
+
         function renderSyncModal() {
             const container = document.getElementById('modal-content-sync');
             if (!container) return;
@@ -5871,6 +5861,7 @@
                 document.getElementById('btn-sync-logout')?.addEventListener('click', async () => {
                     if (window.FirebaseSync) {
                         await window.FirebaseSync.logoutUser();
+                        lastSyncError = null;
                         renderSyncModal();
                         updateSyncHeaderBadge();
                     }
@@ -5899,6 +5890,27 @@
                             <span>⚡ QUICK ANONYMOUS CLOUD SYNC</span>
                         </button>
                     </div>
+
+                    ${lastSyncError ? `
+                    <div class="mt-4 bg-red-950/40 border border-red-500/30 text-red-200 rounded-xl p-3.5 text-[11px] leading-relaxed text-left space-y-2">
+                        <div class="flex items-center gap-1.5 font-bold text-red-400">
+                            <span>⚠️</span>
+                            <span class="orbitron uppercase">CONNECTION ATTEMPT FAILED</span>
+                        </div>
+                        <p class="font-semibold text-stone-300">Code: <span class="font-mono text-red-400">${lastSyncError.code || 'unknown-error'}</span></p>
+                        <p class="text-stone-400 font-medium">${lastSyncError.message || String(lastSyncError)}</p>
+                        <div class="bg-black/30 p-2.5 rounded-lg border border-red-500/10 mt-2">
+                            <strong class="text-amber-400 font-bold block mb-1">🛠️ HOW TO RESOLVE:</strong>
+                            <span class="text-stone-300 font-medium">
+                                ${lastSyncError.code === 'auth/unauthorized-domain' 
+                                    ? 'Authorize <strong>runrajarun-18.vercel.app</strong> in your Firebase Console under: <em>Authentication ➔ Settings ➔ Authorized domains</em>.'
+                                    : lastSyncError.code === 'auth/operation-not-allowed'
+                                    ? 'Enable the <strong>Anonymous</strong> sign-in method in your Firebase Console under: <em>Authentication ➔ Sign-in method</em>.'
+                                    : 'Please verify your Firebase API key, project permissions, and database rules are properly provisioned.'}
+                            </span>
+                        </div>
+                    </div>
+                    ` : ''}
                 `;
 
                 const btnGoogle = document.getElementById('btn-sync-google');
@@ -5909,12 +5921,15 @@
                         try {
                             btnGoogle.disabled = true;
                             btnGoogle.textContent = 'CONNECTING GOOGLE...';
+                            lastSyncError = null;
                             await window.FirebaseSync.loginWithGoogle();
                             renderSyncModal();
                             updateSyncHeaderBadge();
                         } catch (e) {
                             btnGoogle.disabled = false;
                             btnGoogle.textContent = 'SIGN IN WITH GOOGLE';
+                            lastSyncError = e;
+                            renderSyncModal();
                             if (e && e.code === 'auth/unauthorized-domain' && e.fallbackUser) {
                                 renderSyncModal();
                                 updateSyncHeaderBadge();
@@ -5928,12 +5943,15 @@
                         try {
                             btnGuest.disabled = true;
                             btnGuest.textContent = 'CREATING ANONYMOUS SYNC...';
+                            lastSyncError = null;
                             await window.FirebaseSync.loginAnonymouslyUser();
                             renderSyncModal();
                             updateSyncHeaderBadge();
                         } catch (e) {
                             btnGuest.disabled = false;
                             btnGuest.textContent = '⚡ QUICK ANONYMOUS CLOUD SYNC';
+                            lastSyncError = e;
+                            renderSyncModal();
                         }
                     });
                 }
