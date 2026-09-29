@@ -3,6 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- Global Uncaught Error Visualizer for easy on-screen diagnostics -->
+    <script>
+        window.addEventListener('error', function(event) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed inset-x-4 top-4 z-50 p-4 bg-red-950/95 border border-red-500 rounded-xl shadow-2xl text-red-200 text-xs font-semibold orbitron leading-relaxed space-y-2 pointer-events-auto';
+            errorDiv.style.fontFamily = 'monospace';
+            errorDiv.innerHTML = `
+                <div class="flex items-center gap-1.5 text-red-400 font-black">
+                    <span>🚨 UNCAUGHT RUNTIME EXCEPTION</span>
+                </div>
+                <p class="font-bold text-white">${event.message || 'Unknown Error'}</p>
+                <p class="text-stone-400">File: ${event.filename || 'unknown'} (Line: ${event.lineno || '?'}, Col: ${event.colno || '?'})</p>
+                ${event.error && event.error.stack ? `
+                <pre class="bg-black/45 p-2 rounded-lg text-[10px] text-stone-300 max-h-36 overflow-auto text-left font-mono whitespace-pre-wrap">${event.error.stack}</pre>
+                ` : ''}
+                <button onclick="this.parentElement.remove()" class="bg-red-500 text-white px-3 py-1.5 rounded-lg font-bold orbitron uppercase tracking-wider text-[10px] cursor-pointer mt-1">DISMISS</button>
+            `;
+            document.body.appendChild(errorDiv);
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed inset-x-4 top-4 z-50 p-4 bg-red-950/95 border border-red-500 rounded-xl shadow-2xl text-red-200 text-xs font-semibold orbitron leading-relaxed space-y-2 pointer-events-auto';
+            errorDiv.style.fontFamily = 'monospace';
+            errorDiv.innerHTML = `
+                <div class="flex items-center gap-1.5 text-red-400 font-black">
+                    <span>🚨 UNHANDLED REJECTION (PROMISE)</span>
+                </div>
+                <p class="font-bold text-white">${event.reason ? (event.reason.message || String(event.reason)) : 'Promise Rejection'}</p>
+                ${event.reason && event.reason.stack ? `
+                <pre class="bg-black/45 p-2 rounded-lg text-[10px] text-stone-300 max-h-36 overflow-auto text-left font-mono whitespace-pre-wrap">${event.reason.stack}</pre>
+                ` : ''}
+                <button onclick="this.parentElement.remove()" class="bg-red-500 text-white px-3 py-1.5 rounded-lg font-bold orbitron uppercase tracking-wider text-[10px] cursor-pointer mt-1">DISMISS</button>
+            `;
+            document.body.appendChild(errorDiv);
+        });
+    </script>
     <title>Run Raja Run - Ancient Temple Odyssey</title>
     <!-- Tailwind CSS for modern responsive UI -->
     <script src="https://cdn.tailwindcss.com"></script>
