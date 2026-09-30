@@ -149,52 +149,68 @@
         .animate-hud-pulse {
             animation: hud-pulse 0.16s ease-out;
         }
+
+        /* --- CINEMATIC RUNNER INTRO ANIMATIONS --- */
+        @keyframes run-bob {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(-10px) scaleY(0.96); }
+        }
+        .runner-anim {
+            animation: run-bob 0.28s infinite ease-in-out;
+        }
+        
+        @keyframes speed-streak {
+            0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; }
+            45% { opacity: 0.85; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(2.5); opacity: 0; }
+        }
+        .speed-line {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 140px;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.8), transparent);
+            transform-origin: center;
+            animation: speed-streak 0.65s infinite linear;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="relative w-screen h-screen">
 
-    <!-- CINEMATIC INTRO LOADING SCREEN (RAVITEJA TECH PRESENTS) -->
-    <div id="intro-screen" class="absolute inset-0 bg-[#070301] z-50 flex flex-col items-center justify-center pointer-events-auto transition-opacity duration-1000 overflow-hidden">
-        <!-- Ancient stone flagstone texture background -->
-        <div class="intro-stone-texture"></div>
-        <!-- Pulsating temple torchlight flare -->
-        <div class="intro-torch-flare"></div>
-        <!-- Golden particle container -->
-        <div class="absolute inset-0 opacity-40 overflow-hidden pointer-events-none z-10" id="intro-particles"></div>
+    <!-- CINEMATIC RUNNER INTRO SYSTEM -->
+    <div id="intro-screen" class="absolute inset-0 bg-[#000000] z-50 flex items-center justify-center pointer-events-auto transition-opacity duration-1000 overflow-hidden">
         
-        <!-- FIRST: Loading Progress Elements -->
-        <div id="intro-loading-elements" class="flex flex-col items-center text-center max-w-md px-6 z-10 transition-all duration-500 transform">
-            <span class="text-amber-500/80 font-bold uppercase tracking-[0.3em] text-[10px] orbitron mb-4 animate-pulse">PRESENTS</span>
-            
-            <!-- RAVITEJA TECH Shuffling/Glowing Logo -->
-            <h1 id="intro-logo" class="text-4xl md:text-6xl font-black tracking-widest uppercase orbitron text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 drop-shadow-[0_0_20px_rgba(234,179,8,0.5)]">
-                RAVITEJA TECH
-            </h1>
-            
-            <div class="w-48 h-[2.5px] bg-amber-500/20 mt-8 mb-4 rounded-full overflow-hidden relative">
-                <!-- Golden progress filler -->
-                <div id="intro-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-yellow-400 w-0 transition-all duration-300"></div>
+        <!-- Speed Streaks Container -->
+        <div id="intro-speed-container" class="absolute inset-0 opacity-80 overflow-hidden pointer-events-none z-10 transition-opacity duration-500"></div>
+        
+        <!-- Glowing Runner Silhouette Box -->
+        <div id="runner-silhouette-box" class="absolute z-20 flex flex-col items-center justify-center gap-4 transition-all duration-500 scale-100 opacity-100">
+            <div class="runner-anim flex items-center justify-center">
+                <svg class="w-24 h-24 text-amber-500 filter drop-shadow-[0_0_20px_rgba(245,158,11,0.95)]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 10.2l-.5 2.1c-.2.9-1 1.5-1.9 1.5H3.5c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5h1.1l.6-2.5c.3-1.1 1.2-1.9 2.3-2.1l4.4-.7c1-.2 2.1.2 2.6 1.1l1.4 2.2c.4.6 1.1 1 1.9 1h1.1c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5h-1.6c-.6 0-1.2-.3-1.5-.8L13 11.2l-1 2.9 2.8 2.8c.4.4.6 1.1.6 1.6v3c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5v-2.3L9.8 16.5l-1.3-4.8 1.3-2.8z"/>
+                </svg>
             </div>
-            
-            <!-- Loading Status -->
-            <span id="intro-status" class="text-stone-400 text-xs font-bold uppercase tracking-widest orbitron">Initializing Engine... 0%</span>
+            <span class="text-amber-400 font-extrabold tracking-[0.4em] uppercase text-xs orbitron animate-pulse filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">LOADING ODYSSEY...</span>
         </div>
-
-        <!-- SECOND: Dramatic Title Reveal elements -->
-        <div id="intro-title-reveal" class="absolute flex flex-col items-center text-center max-w-lg px-6 z-10 opacity-0 scale-90 transition-all duration-1000 transform pointer-events-none hidden">
+        
+        <!-- Ornate Central Letter Reveal Container -->
+        <div id="intro-text-reveal" class="absolute z-30 flex flex-col items-center text-center max-w-xl px-6 opacity-0 transform scale-90 transition-all duration-700 pointer-events-none">
             <!-- Floating Royal Golden Crown -->
-            <div class="text-6xl md:text-7xl mb-2 animate-bounce filter drop-shadow-[0_0_25px_rgba(251,191,36,0.9)]">
+            <div id="intro-crown" class="text-5xl md:text-6xl mb-3 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.85)] opacity-0 transition-opacity duration-500">
                 👑
             </div>
-            <div class="bg-gradient-to-r from-amber-500/20 via-amber-500/40 to-amber-500/20 border border-amber-500/70 text-amber-300 px-5 py-1 rounded-full text-xs font-black uppercase tracking-[0.3em] mb-4 orbitron shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+            <div id="intro-badge" class="bg-gradient-to-r from-amber-500/20 via-amber-500/40 to-amber-500/20 border border-amber-500/60 text-amber-300 px-4 py-0.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-4 orbitron shadow-[0_0_15px_rgba(245,158,11,0.3)] opacity-0 transition-opacity duration-500">
                 ANCIENT TEMPLE ODYSSEY
             </div>
-            <h1 class="text-6xl md:text-8xl font-black tracking-wider uppercase leading-none orbitron text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow-[0_0_45px_rgba(245,158,11,0.9)]">
-                RUN RAJA RUN
+            <h1 id="intro-reveal-title" class="text-5xl md:text-7xl font-black tracking-wider uppercase leading-none orbitron text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow-[0_0_35px_rgba(245,158,11,0.85)] min-h-[80px]">
+                <!-- RUN RAJA RUN followed by RAVITEJA DADI -->
             </h1>
-            <div class="w-36 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent my-5"></div>
-            <span class="text-amber-400 font-extrabold uppercase tracking-[0.35em] text-[11px] orbitron mb-6 animate-pulse">ENTER THE MAJESTY</span>
-            <span class="text-stone-500/80 font-bold tracking-[0.22em] orbitron text-[8px] uppercase select-none">Copyright © 2026 by Raviteja Dadi</span>
+            <div id="intro-divider" class="w-32 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent my-4 opacity-0 transition-opacity duration-500"></div>
+            <span id="intro-subtitle" class="text-amber-400/90 font-extrabold uppercase tracking-[0.3em] text-[10px] orbitron animate-pulse opacity-0 transition-opacity duration-500">
+                ENTER THE MAJESTY
+            </span>
         </div>
     </div>
 
@@ -303,19 +319,19 @@
             
             <!-- TOP CLOUD SYNC & STATUS NAVIGATION BAR (Aligned to Top Right) -->
             <div id="sync-header-bar" class="absolute top-4 left-4 right-4 flex justify-end items-center z-20 pointer-events-auto gap-1.5 md:gap-2 text-stone-200">
-                <!-- Left/Center Username button (Sync trigger) -->
-                <button id="btn-sync-badge" class="bg-stone-950/85 hover:bg-stone-900 border border-amber-500/40 hover:border-amber-400 rounded-xl px-2.5 md:px-3 py-1.5 flex items-center gap-1.5 md:gap-2 shadow-xl text-[10px] md:text-xs font-black orbitron text-white uppercase tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 backdrop-blur-md">
+                <!-- Left/Center Username button (Sync trigger - hidden) -->
+                <button id="btn-sync-badge" class="hidden bg-stone-950/85 hover:bg-stone-900 border border-amber-500/40 hover:border-amber-400 rounded-xl px-2.5 md:px-3 py-1.5 flex items-center gap-1.5 md:gap-2 shadow-xl text-[10px] md:text-xs font-black orbitron text-white uppercase tracking-wider transition-all transform hover:scale-[1.02] active:scale-95 backdrop-blur-md">
                     <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
                     <span id="sync-user-name" class="text-white font-black text-[10px] md:text-[11px] leading-none max-w-[80px] md:max-w-[120px] truncate">GUEST USER</span>
                 </button>
 
-                <!-- Rank Symbol Button (Leaderboard trigger) -->
-                <button id="btn-leaderboard" class="bg-stone-950/85 hover:bg-stone-900 border border-yellow-500/50 hover:border-yellow-400 text-yellow-400 font-extrabold text-xs md:text-sm w-8 h-8 md:w-9 md:h-9 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center orbitron backdrop-blur-md" title="Royal Rankings & Leaderboard">
+                <!-- Rank Symbol Button (Leaderboard trigger - hidden) -->
+                <button id="btn-leaderboard" class="hidden bg-stone-950/85 hover:bg-stone-900 border border-yellow-500/50 hover:border-yellow-400 text-yellow-400 font-extrabold text-xs md:text-sm w-8 h-8 md:w-9 md:h-9 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center orbitron backdrop-blur-md" title="Royal Rankings & Leaderboard">
                     <span>🏆</span>
                 </button>
 
-                <!-- Chat Box Symbol Button (Friends & Chat trigger) -->
-                <button id="btn-friends-header" class="relative bg-stone-950/85 hover:bg-emerald-950/40 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 font-extrabold text-xs md:text-sm w-8 h-8 md:w-9 md:h-9 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center orbitron backdrop-blur-md" title="Friends & Real-Time Chat">
+                <!-- Chat Box Symbol Button (Friends & Chat trigger - hidden) -->
+                <button id="btn-friends-header" class="hidden relative bg-stone-950/85 hover:bg-emerald-950/40 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 font-extrabold text-xs md:text-sm w-8 h-8 md:w-9 md:h-9 rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center orbitron backdrop-blur-md" title="Friends & Real-Time Chat">
                     <span>💬</span>
                     <span id="friends-unread-dot" class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-stone-950 animate-pulse"></span>
                 </button>
@@ -1900,6 +1916,60 @@
         const darkWoodMat = new THREE.MeshStandardMaterial({ color: 0x1d120a, roughness: 0.9 }); // Dark ancient ebony teak
         const agedBronzeMat = new THREE.MeshStandardMaterial({ color: 0x423528, metalness: 0.8, roughness: 0.5 }); // Dark oxidized bronze
         const darkGoldMat = new THREE.MeshStandardMaterial({ color: 0x8a6f2d, metalness: 0.85, roughness: 0.25 }); // Antique Gold
+        const mossMat = new THREE.MeshStandardMaterial({ color: 0x224d17, roughness: 0.98 }); // Ivy/Moss green
+        const leafMat = new THREE.MeshStandardMaterial({ color: 0x143b10, roughness: 0.9 }); // Dark overgrown leaf green
+        const crackMat = new THREE.MeshBasicMaterial({ color: 0x1a120e }); // Dark recessed lines for cracks
+
+        // --- GPU MEMORY RECOVERY AND DISPOSAL UTILITY ---
+        const globalMaterials = [stoneMat, darkBasaltMat, darkWoodMat, agedBronzeMat, darkGoldMat, mossMat, leafMat, crackMat];
+
+        function safelyDisposeNode(node) {
+            if (!node) return;
+            
+            // Recursive traversal for nested children
+            if (node.children && node.children.length > 0) {
+                for (let i = node.children.length - 1; i >= 0; i--) {
+                    safelyDisposeNode(node.children[i]);
+                }
+            }
+
+            // Dispose geometries
+            if (node.geometry && typeof node.geometry.dispose === 'function') {
+                try {
+                    node.geometry.dispose();
+                } catch (e) {
+                    console.warn("Geometry dispose warning:", e);
+                }
+            }
+
+            // Dispose materials and their maps if not shared globally
+            if (node.material) {
+                const materials = Array.isArray(node.material) ? node.material : [node.material];
+                const ballastTex = (typeof ballastTexture !== 'undefined') ? ballastTexture : null;
+                materials.forEach(mat => {
+                    if (mat && !globalMaterials.includes(mat)) {
+                        if (typeof mat.dispose === 'function') {
+                            try {
+                                mat.dispose();
+                            } catch (e) {
+                                console.warn("Material dispose warning:", e);
+                            }
+                        }
+                        // Dispose of maps if they are defined and not shared/ballastTexture
+                        const maps = ['map', 'lightMap', 'bumpMap', 'normalMap', 'specularMap', 'envMap', 'alphaMap', 'aoMap', 'displacementMap', 'emissiveMap', 'roughnessMap', 'metalnessMap'];
+                        maps.forEach(mapKey => {
+                            if (mat[mapKey] && mat[mapKey] !== ballastTex && typeof mat[mapKey].dispose === 'function') {
+                                try {
+                                    mat[mapKey].dispose();
+                                } catch (e) {
+                                    console.warn("Map dispose warning:", e);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
 
         // --- INITIALIZE GROUPS ---
         const menuRuinsGroup = new THREE.Group();
@@ -1944,13 +2014,22 @@
         neonLight.position.set(-20, 25, 40);
         scene.add(neonLight);
 
-        // --- ATMOSPHERIC DAYTIME LIGHTING ENGINE (No dark mode - luminous sunlit temple atmosphere) ---
+        // Cool glowing silver moonlight source (triggers only during night)
+        const moonLight = new THREE.DirectionalLight(0x7dd3fc, 0.0);
+        moonLight.position.set(-15, 45, -25);
+        moonLight.castShadow = true;
+        moonLight.shadow.mapSize.width = 1024;
+        moonLight.shadow.mapSize.height = 1024;
+        scene.add(moonLight);
+
+        // --- ATMOSPHERIC DAYTIME & MYSTICAL NIGHT LIGHTING ENGINE ---
         const DAY_NIGHT_KEYFRAMES = [
-            { pos: 0.00, bg: 0xd97706, fog: 0x92400e, sun: 0xfbbf24, ambient: 0x78350f, neon: 0xf59e0b, sunIntensity: 2.5, ambIntensity: 1.35, neonIntensity: 1.5 },  // Sunrise / Golden Dawn
-            { pos: 0.25, bg: 0x0284c7, fog: 0x38bdf8, sun: 0xfffbeb, ambient: 0x0284c7, neon: 0x38bdf8, sunIntensity: 3.2, ambIntensity: 1.70, neonIntensity: 1.9 },  // Bright Royal Midday
-            { pos: 0.50, bg: 0xb45309, fog: 0x78350f, sun: 0xf59e0b, ambient: 0x78350f, neon: 0xfbbf24, sunIntensity: 2.7, ambIntensity: 1.40, neonIntensity: 1.6 },  // Golden Afternoon
-            { pos: 0.75, bg: 0xd97706, fog: 0xb45309, sun: 0xfcd34d, ambient: 0x92400e, neon: 0xf59e0b, sunIntensity: 2.9, ambIntensity: 1.50, neonIntensity: 1.7 },  // Sunlit Temple Radiance
-            { pos: 1.00, bg: 0xd97706, fog: 0x92400e, sun: 0xfbbf24, ambient: 0x78350f, neon: 0xf59e0b, sunIntensity: 2.5, ambIntensity: 1.35, neonIntensity: 1.5 }   // Loop to Sunrise
+            { pos: 0.00, bg: 0xd97706, fog: 0x92400e, sun: 0xfbbf24, ambient: 0x78350f, neon: 0xf59e0b, sunIntensity: 2.5, ambIntensity: 1.35, neonIntensity: 1.5, moonIntensity: 0.0 },  // Sunrise / Golden Dawn
+            { pos: 0.20, bg: 0x0284c7, fog: 0x38bdf8, sun: 0xfffbeb, ambient: 0x0284c7, neon: 0x38bdf8, sunIntensity: 3.2, ambIntensity: 1.70, neonIntensity: 1.9, moonIntensity: 0.0 },  // Bright Royal Midday
+            { pos: 0.40, bg: 0xb45309, fog: 0x78350f, sun: 0xf59e0b, ambient: 0x78350f, neon: 0xfbbf24, sunIntensity: 2.7, ambIntensity: 1.40, neonIntensity: 1.6, moonIntensity: 0.0 },  // Golden Afternoon
+            { pos: 0.60, bg: 0xd97706, fog: 0xb45309, sun: 0xfcd34d, ambient: 0x92400e, neon: 0xf59e0b, sunIntensity: 2.9, ambIntensity: 1.50, neonIntensity: 1.7, moonIntensity: 0.0 },  // Sunset Radiance
+            { pos: 0.80, bg: 0x04040f, fog: 0x060618, sun: 0x111122, ambient: 0x06061c, neon: 0xb45309, sunIntensity: 0.1, ambIntensity: 0.45, neonIntensity: 0.9, moonIntensity: 2.2 },  // Mystical Midnight Moonlit Night
+            { pos: 1.00, bg: 0xd97706, fog: 0x92400e, sun: 0xfbbf24, ambient: 0x78350f, neon: 0xf59e0b, sunIntensity: 2.5, ambIntensity: 1.35, neonIntensity: 1.5, moonIntensity: 0.0 }   // Loop to Sunrise
         ];
 
         function updateDayNightLighting(dist) {
@@ -1988,6 +2067,28 @@
             if (typeof neonLight !== 'undefined' && neonLight) {
                 neonLight.color.copy(new THREE.Color(k1.neon)).lerp(new THREE.Color(k2.neon), t);
                 neonLight.intensity = k1.neonIntensity + (k2.neonIntensity - k1.neonIntensity) * t;
+            }
+
+            if (typeof moonLight !== 'undefined' && moonLight) {
+                const k1Moon = k1.moonIntensity !== undefined ? k1.moonIntensity : 0.0;
+                const k2Moon = k2.moonIntensity !== undefined ? k2.moonIntensity : 0.0;
+                moonLight.color.copy(new THREE.Color(0x7dd3fc));
+                
+                // Calculate custom moonPhase factor over a 5,000-meter lunar cycle
+                // Oscillates slowly to shift baseline moonlight between New Moon (dimmer) and Full Moon (brilliant)
+                const LUNAR_CYCLE_METERS = 5000;
+                const lunarProgress = (dist % LUNAR_CYCLE_METERS) / LUNAR_CYCLE_METERS;
+                const moonPhaseFactor = 0.75 + Math.cos(lunarProgress * Math.PI * 2) * 0.4; // varies from 0.35 to 1.15
+                
+                const baseIntensity = (k1Moon + (k2Moon - k1Moon) * t) * moonPhaseFactor;
+                
+                if (baseIntensity > 0.05) {
+                    // Apply a subtle, slow atmospheric oscillation representing moonlit cloud wisps and moon phase shifts
+                    const oscillation = Math.sin(dist * 0.02) * 0.25;
+                    moonLight.intensity = Math.max(0.1, baseIntensity + oscillation);
+                } else {
+                    moonLight.intensity = baseIntensity;
+                }
             }
         }
 
@@ -2065,6 +2166,12 @@
                 flame.position.set(side * 1.8, 0.25, -4.5);
                 menuRuinsGroup.add(flame);
                 blinkingLights.push(flame);
+
+                // Add PointLight to cast warm orange flickering light on showcase
+                const pLight = new THREE.PointLight(0xff5500, 3.5, 6.0);
+                pLight.position.set(side * 1.8, 0.25, -4.5);
+                menuRuinsGroup.add(pLight);
+                blinkingLights.push(pLight);
             }
         }
 
@@ -2133,6 +2240,341 @@
 
         const ballastTexture = createBallastTexture();
 
+        // --- PROCEDURAL TEMPLE RUINS GENERATION SUITE ---
+        function addCracks(meshGroup, xSize, ySize, zSize, count = 3) {
+            if (!isWebGLSupported) return;
+            for (let i = 0; i < count; i++) {
+                const crackGeo = new THREE.BoxGeometry(
+                    Math.random() * 0.15 + 0.05,
+                    Math.random() * (ySize * 0.4) + 0.2,
+                    zSize + 0.02
+                );
+                const crack = new THREE.Mesh(crackGeo, crackMat);
+                crack.position.set(
+                    (Math.random() - 0.5) * xSize * 0.95,
+                    (Math.random() - 0.5) * ySize * 0.95,
+                    0
+                );
+                crack.rotation.z = (Math.random() - 0.5) * 0.4;
+                meshGroup.add(crack);
+            }
+        }
+
+        function addVinesAndMoss(assetGroup, baseX, baseY, baseZ, maxLen = 3.0) {
+            if (!isWebGLSupported) return;
+            const vineGroup = new THREE.Group();
+            vineGroup.position.set(baseX, baseY, baseZ);
+            
+            const vineLen = Math.random() * (maxLen - 0.5) + 0.8;
+            const vineGeo = new THREE.CylinderGeometry(0.06, 0.04, vineLen, 5);
+            const vine = new THREE.Mesh(vineGeo, mossMat);
+            vine.position.y = -vineLen / 2;
+            vineGroup.add(vine);
+            
+            const leafCount = Math.floor(vineLen * 1.5) + 1;
+            for (let l = 0; l < leafCount; l++) {
+                const leafGeo = new THREE.DodecahedronGeometry(Math.random() * 0.22 + 0.12, 0);
+                const leaf = new THREE.Mesh(leafGeo, leafMat);
+                leaf.position.set(
+                    (Math.random() - 0.5) * 0.2,
+                    -Math.random() * vineLen,
+                    (Math.random() - 0.5) * 0.2
+                );
+                leaf.rotation.set(Math.random() * 2, Math.random() * 2, Math.random() * 2);
+                vineGroup.add(leaf);
+            }
+            assetGroup.add(vineGroup);
+        }
+
+        function addLeafBush(assetGroup, x, y, z, scale = 1.0) {
+            if (!isWebGLSupported) return;
+            const bush = new THREE.Group();
+            bush.position.set(x, y, z);
+            
+            const partsCount = Math.floor(Math.random() * 3) + 3;
+            for (let p = 0; p < partsCount; p++) {
+                const r = (Math.random() * 0.4 + 0.3) * scale;
+                const geo = new THREE.DodecahedronGeometry(r, 0);
+                const leafPart = new THREE.Mesh(geo, leafMat);
+                leafPart.position.set(
+                    (Math.random() - 0.5) * r * 0.8,
+                    (Math.random() - 0.5) * r * 0.6,
+                    (Math.random() - 0.5) * r * 0.8
+                );
+                leafPart.castShadow = true;
+                bush.add(leafPart);
+            }
+            assetGroup.add(bush);
+        }
+
+        function createCollapsedColumn() {
+            const group = new THREE.Group();
+            if (!isWebGLSupported) return group;
+            
+            const baseGeo = new THREE.BoxGeometry(2.2, 0.6, 2.2);
+            const plinth = new THREE.Mesh(baseGeo, stoneMat);
+            plinth.position.y = 0.3;
+            plinth.castShadow = true;
+            plinth.receiveShadow = true;
+            group.add(plinth);
+            addCracks(plinth, 2.2, 0.6, 2.2, 2);
+            
+            let currentY = 0.6;
+            const drumGeo = new THREE.CylinderGeometry(0.8, 0.8, 1.5, 8);
+            
+            const drum1 = new THREE.Mesh(drumGeo, stoneMat);
+            drum1.position.set(0.1, currentY + 0.75, -0.05);
+            drum1.castShadow = true;
+            drum1.receiveShadow = true;
+            group.add(drum1);
+            currentY += 1.5;
+            
+            const drum2 = new THREE.Mesh(drumGeo, stoneMat);
+            drum2.position.set(-0.15, currentY + 0.75, 0.1);
+            drum2.rotation.y = 0.4;
+            drum2.rotation.x = 0.05;
+            drum2.castShadow = true;
+            group.add(drum2);
+            
+            const fallenDrum = new THREE.Mesh(drumGeo, stoneMat);
+            fallenDrum.position.set(1.8, 0.8, -1.2);
+            fallenDrum.rotation.set(Math.PI / 2, 0.3, Math.PI / 4);
+            fallenDrum.castShadow = true;
+            group.add(fallenDrum);
+            
+            const capGeo = new THREE.BoxGeometry(1.8, 0.5, 1.8);
+            const cap = new THREE.Mesh(capGeo, stoneMat);
+            cap.position.set(2.4, 0.25, 0.6);
+            cap.rotation.set(-0.2, 0.5, 0.8);
+            cap.castShadow = true;
+            group.add(cap);
+            
+            for (let c = 0; c < 4; c++) {
+                const size = Math.random() * 0.4 + 0.2;
+                const rubGeo = new THREE.BoxGeometry(size, size, size);
+                const rub = new THREE.Mesh(rubGeo, stoneMat);
+                rub.position.set(
+                    (Math.random() - 0.5) * 4.0,
+                    size / 2,
+                    (Math.random() - 0.5) * 4.0
+                );
+                rub.rotation.set(Math.random()*2, Math.random()*2, Math.random()*2);
+                group.add(rub);
+            }
+            
+            addLeafBush(group, -1.0, 0.1, -0.5, 1.5);
+            addLeafBush(group, 1.5, 0.1, 1.2, 1.2);
+            addVinesAndMoss(drum2, 0, 0.75, 0, 2.5);
+            
+            return group;
+        }
+
+        function createBrokenStatue() {
+            const group = new THREE.Group();
+            if (!isWebGLSupported) return group;
+            
+            const plinthGeo = new THREE.BoxGeometry(2.4, 0.8, 2.4);
+            const plinth = new THREE.Mesh(plinthGeo, stoneMat);
+            plinth.position.y = 0.4;
+            plinth.castShadow = true;
+            group.add(plinth);
+            addCracks(plinth, 2.4, 0.8, 2.4, 3);
+            
+            const torsoGeo = new THREE.CylinderGeometry(0.7, 0.9, 1.8, 8);
+            const torso = new THREE.Mesh(torsoGeo, stoneMat);
+            torso.position.set(0, 1.7, 0);
+            torso.rotation.z = -0.15;
+            torso.castShadow = true;
+            group.add(torso);
+            
+            const bandGeo = new THREE.CylinderGeometry(0.92, 0.92, 0.15, 8);
+            const band = new THREE.Mesh(bandGeo, darkGoldMat);
+            band.position.set(0, 1.2, 0);
+            torso.add(band);
+            
+            const headGeo = new THREE.DodecahedronGeometry(0.65, 0);
+            const head = new THREE.Mesh(headGeo, stoneMat);
+            head.position.set(1.4, 0.4, 0.8);
+            head.rotation.set(0.6, 0.2, 1.2);
+            head.castShadow = true;
+            group.add(head);
+            
+            const crownGeo = new THREE.ConeGeometry(0.4, 0.8, 8);
+            const crown = new THREE.Mesh(crownGeo, darkGoldMat);
+            crown.position.set(1.9, 0.3, 1.3);
+            crown.rotation.set(1.4, -0.4, 0.3);
+            crown.castShadow = true;
+            group.add(crown);
+            
+            addLeafBush(group, 0, 0.2, 0, 1.8);
+            addLeafBush(group, -1.2, 0.1, -1.2, 1.3);
+            addVinesAndMoss(torso, 0, 0.9, 0, 3.0);
+            
+            return group;
+        }
+
+        function createObelisk() {
+            const group = new THREE.Group();
+            if (!isWebGLSupported) return group;
+            
+            const pedGeo = new THREE.BoxGeometry(2.0, 1.0, 2.0);
+            const ped = new THREE.Mesh(pedGeo, stoneMat);
+            ped.position.y = 0.5;
+            ped.castShadow = true;
+            group.add(ped);
+            addCracks(ped, 2.0, 1.0, 2.0, 2);
+            
+            const shaftBottomGeo = new THREE.CylinderGeometry(0.6, 0.9, 2.5, 4);
+            const bottomShaft = new THREE.Mesh(shaftBottomGeo, stoneMat);
+            bottomShaft.position.set(0, 2.25, 0);
+            bottomShaft.rotation.y = Math.PI / 4;
+            bottomShaft.castShadow = true;
+            group.add(bottomShaft);
+            
+            const shaftTopGeo = new THREE.ConeGeometry(0.6, 2.5, 4);
+            shaftTopGeo.rotateY(Math.PI / 4);
+            const topShaft = new THREE.Mesh(shaftTopGeo, stoneMat);
+            topShaft.position.set(0.15, 4.35, -0.1);
+            topShaft.rotation.set(0.12, 0.05, -0.15);
+            topShaft.castShadow = true;
+            group.add(topShaft);
+            
+            const apexGeo = new THREE.ConeGeometry(0.4, 0.6, 4);
+            apexGeo.rotateY(Math.PI / 4);
+            const apex = new THREE.Mesh(apexGeo, darkGoldMat);
+            apex.position.y = 1.45;
+            topShaft.add(apex);
+            
+            addLeafBush(group, 0, 0.4, 0, 1.6);
+            addVinesAndMoss(topShaft, 0, 0, 0, 4.0);
+            addVinesAndMoss(bottomShaft, -0.3, 0.5, 0.3, 2.0);
+            
+            return group;
+        }
+
+        function createRuinedShrine() {
+            const group = new THREE.Group();
+            if (!isWebGLSupported) return group;
+            
+            const step1Geo = new THREE.BoxGeometry(3.2, 0.4, 3.2);
+            const step1 = new THREE.Mesh(step1Geo, stoneMat);
+            step1.position.y = 0.2;
+            step1.castShadow = true;
+            step1.receiveShadow = true;
+            group.add(step1);
+            
+            const step2Geo = new THREE.BoxGeometry(2.4, 0.4, 2.4);
+            const step2 = new THREE.Mesh(step2Geo, stoneMat);
+            step2.position.y = 0.6;
+            step2.castShadow = true;
+            step2.receiveShadow = true;
+            group.add(step2);
+            
+            const pilGeo = new THREE.CylinderGeometry(0.2, 0.25, 1.8, 6);
+            const leftPil = new THREE.Mesh(pilGeo, stoneMat);
+            leftPil.position.set(-0.8, 1.7, -0.8);
+            leftPil.castShadow = true;
+            group.add(leftPil);
+            
+            const rightPil = leftPil.clone();
+            rightPil.position.set(0.8, 1.7, 0.8);
+            rightPil.rotation.z = 0.3;
+            group.add(rightPil);
+            
+            const bowlGeo = new THREE.CylinderGeometry(0.6, 0.3, 0.5, 10);
+            const bowl = new THREE.Mesh(bowlGeo, agedBronzeMat);
+            bowl.position.set(0, 1.05, 0);
+            bowl.castShadow = true;
+            group.add(bowl);
+            
+            const flameGeo = new THREE.ConeGeometry(0.35, 0.9, 8);
+            const flameMat = new THREE.MeshBasicMaterial({
+                color: 0xff4d00,
+                transparent: true,
+                opacity: 0.85,
+                blending: THREE.AdditiveBlending
+            });
+            const flame = new THREE.Mesh(flameGeo, flameMat);
+            flame.position.set(0, 1.45, 0);
+            group.add(flame);
+            
+            const flameLight = new THREE.PointLight(0xff5500, 1.5, 6);
+            flameLight.position.set(0, 1.8, 0);
+            group.add(flameLight);
+            blinkingLights.push(flameLight);
+            
+            addLeafBush(group, 0.8, 0.2, -0.8, 1.5);
+            addLeafBush(group, -0.8, 0.2, 0.8, 1.4);
+            addVinesAndMoss(leftPil, 0, 0.9, 0, 2.0);
+            
+            return group;
+        }
+
+        function createOvergrownArchway() {
+            const archGroup = new THREE.Group();
+            if (!isWebGLSupported) return archGroup;
+            
+            const pillarGeo = new THREE.CylinderGeometry(0.6, 0.8, 12, 8);
+            const leftPillar = new THREE.Mesh(pillarGeo, stoneMat);
+            leftPillar.position.set(-14, 6, 0);
+            leftPillar.castShadow = true;
+            leftPillar.receiveShadow = true;
+            archGroup.add(leftPillar);
+            addCracks(leftPillar, 1.2, 12, 1.2, 3);
+            
+            const rightPillar = leftPillar.clone();
+            rightPillar.position.x = 14;
+            rightPillar.rotation.y = Math.PI;
+            archGroup.add(rightPillar);
+            
+            const barGeo = new THREE.BoxGeometry(28.4, 1.0, 1.4);
+            const topBar = new THREE.Mesh(barGeo, stoneMat);
+            topBar.position.set(0, 11.9, 0);
+            topBar.rotation.z = -0.015;
+            topBar.castShadow = true;
+            archGroup.add(topBar);
+            
+            const accentGeo = new THREE.BoxGeometry(2.2, 1.2, 1.5);
+            const accentL = new THREE.Mesh(accentGeo, darkGoldMat);
+            accentL.position.set(-11, 11.9, 0);
+            accentL.rotation.z = -0.015;
+            archGroup.add(accentL);
+            
+            const accentR = accentL.clone();
+            accentR.position.x = 11;
+            archGroup.add(accentR);
+            
+            addLeafBush(archGroup, -14, 11.5, 0, 3.2);
+            addLeafBush(archGroup, 14, 11.5, 0, 2.8);
+            addLeafBush(archGroup, 0, 12.3, 0.2, 3.5);
+            
+            addVinesAndMoss(topBar, -9, 0, 0, 5.5);
+            addVinesAndMoss(topBar, -4, 0, -0.3, 4.0);
+            addVinesAndMoss(topBar, 4, 0, 0.3, 4.5);
+            addVinesAndMoss(topBar, 9, 0, 0, 6.0);
+            
+            addVinesAndMoss(leftPillar, 0, 2, 0, 5.0);
+            addVinesAndMoss(rightPillar, 0, 3, 0, 4.5);
+            
+            return archGroup;
+        }
+
+        function generateProceduralRuin(xSideOffset) {
+            const types = ["column", "statue", "obelisk", "shrine"];
+            const choice = types[Math.floor(Math.random() * types.length)];
+            
+            let ruin;
+            if (choice === "column") ruin = createCollapsedColumn();
+            else if (choice === "statue") ruin = createBrokenStatue();
+            else if (choice === "obelisk") ruin = createObelisk();
+            else ruin = createRuinedShrine();
+            
+            ruin.position.set(xSideOffset, 0, (Math.random() - 0.5) * 10);
+            ruin.rotation.y = Math.random() * Math.PI * 2;
+            
+            return ruin;
+        }
+
         // Single track segment generation
         function createTrackPiece(zOffset) {
             const group = new THREE.Group();
@@ -2172,36 +2614,29 @@
                 group.add(rightTrim);
             }
 
-            if (Math.abs(zOffset) % 100 === 0) {
-                const archGroup = new THREE.Group();
-                archGroup.position.set(0, 0, 0);
+            // Periodically spawn overreaching overgrown archways (every 80m instead of 100m for better cadence)
+            if (Math.abs(zOffset) % 80 === 0) {
+                const overgrownArch = createOvergrownArchway();
+                group.add(overgrownArch);
+            }
 
-                const pillarGeo = new THREE.CylinderGeometry(0.5, 0.7, 12, 8);
-                const leftPillar = new THREE.Mesh(pillarGeo, stoneMat);
-                leftPillar.position.set(-14, 6, 0);
-                leftPillar.castShadow = true;
-                archGroup.add(leftPillar);
+            // 🛡️ SAFE SCENERY OFFSETS: Establish a strict off-lane safety buffer to prevent collision clipping
+            const OUTER_LANE_EDGE = 6.0; // Lane width is 4.0, so the outer lane extends to +/-6.0
+            const COLLISION_SAFETY_BUFFER = 5.5; // Strict 5.5m buffer from the active player track edge
+            const MIN_RUIN_OFFSET = OUTER_LANE_EDGE + COLLISION_SAFETY_BUFFER; // At least 11.5m offset
 
-                const rightPillar = leftPillar.clone();
-                rightPillar.position.x = 14;
-                archGroup.add(rightPillar);
-
-                const barGeo = new THREE.BoxGeometry(28.4, 0.8, 1.0);
-                const topBar = new THREE.Mesh(barGeo, stoneMat);
-                topBar.position.set(0, 12, 0);
-                topBar.castShadow = true;
-                archGroup.add(topBar);
-
-                const accentGeo = new THREE.BoxGeometry(2.0, 1.0, 1.1);
-                const accentL = new THREE.Mesh(accentGeo, darkGoldMat);
-                accentL.position.set(-10, 12, 0);
-                archGroup.add(accentL);
-
-                const accentR = accentL.clone();
-                accentR.position.x = 10;
-                archGroup.add(accentR);
-
-                group.add(archGroup);
+            // Procedurally spawn diverse side temple ruins with 45% probability
+            // Left side background scenery (Guaranteed safe x <= -11.5)
+            if (Math.random() < 0.45) {
+                const leftOffset = -MIN_RUIN_OFFSET - Math.random() * 2.5;
+                const leftRuin = generateProceduralRuin(leftOffset);
+                group.add(leftRuin);
+            }
+            // Right side background scenery (Guaranteed safe x >= 11.5)
+            if (Math.random() < 0.45) {
+                const rightOffset = MIN_RUIN_OFFSET + Math.random() * 2.5;
+                const rightRuin = generateProceduralRuin(rightOffset);
+                group.add(rightRuin);
             }
 
             for (let side = -1; side <= 1; side += 2) {
@@ -3605,6 +4040,7 @@
                 p.userData.life -= dt;
                 
                 if (p.userData.life <= 0) {
+                    safelyDisposeNode(p);
                     particlesGroup.remove(p);
                     continue;
                 }
@@ -3710,6 +4146,7 @@
                     p.position.z += (p.userData.vz || 0) * dt;
                     if (p.position.y <= 0) {
                         spawnRainSplash(p.position.x, p.position.z);
+                        safelyDisposeNode(p);
                         particlesGroup.remove(p);
                         continue;
                     }
@@ -3784,6 +4221,14 @@
                 targetWeather = 'MONSOON_RAIN';
             }
 
+            // NIGHT state overrides CLEAR if in the night interval of 1600m
+            const CYCLE_METERS = 1600;
+            const progress = (distanceTraveled % CYCLE_METERS) / CYCLE_METERS;
+            const nightTime = (progress >= 0.68 && progress <= 0.92);
+            if (nightTime && targetWeather === 'CLEAR') {
+                targetWeather = 'NIGHT';
+            }
+
             if (targetWeather !== currentWeatherState) {
                 currentWeatherState = targetWeather;
                 const hudWeatherBadge = document.getElementById('hud-weather-badge');
@@ -3804,6 +4249,13 @@
                         if (badgeText) badgeText.textContent = 'SOFT MONSOON RAIN';
                     }
                     showAlert('🌧️ SOFT MONSOON RAIN!');
+                } else if (currentWeatherState === 'NIGHT') {
+                    if (hudWeatherBadge) {
+                        hudWeatherBadge.classList.remove('hidden');
+                        if (badgeIcon) badgeIcon.textContent = '🌌';
+                        if (badgeText) badgeText.textContent = 'SACRED TEMPLE NIGHT';
+                    }
+                    showAlert('🌌 SACRED TEMPLE NIGHT!');
                 } else {
                     if (hudWeatherBadge) hudWeatherBadge.classList.add('hidden');
                 }
@@ -4036,6 +4488,12 @@
                     shrineGroup.add(fCone);
                     blinkingLights.push(fCone);
 
+                    // Add PointLight to cast warm flickering orange light on scenery ruins
+                    const pLight = new THREE.PointLight(0xff5500, 3.5, 8.0);
+                    pLight.position.set(0, 2.25, 0);
+                    shrineGroup.add(pLight);
+                    blinkingLights.push(pLight);
+
                     sceneryGroup.add(shrineGroup);
                 }
 
@@ -4075,6 +4533,12 @@
                 beacon.position.set(0, 0.95, 0);
                 obsMeshGroup.add(beacon);
                 blinkingLights.push(beacon);
+
+                // Add PointLight to low barrier beacon
+                const beaconLight = new THREE.PointLight(0xff5500, 3.5, 5.0);
+                beaconLight.position.set(0, 0.95, 0);
+                obsMeshGroup.add(beaconLight);
+                blinkingLights.push(beaconLight);
 
             } else if (type === obstacleTypes.BARRIER_SPIKES) {
                 // SPINNING SPIKED TEMPLE LOG - RE-SKIN TO DARK EBONY WOOD (DARK COLORS)
@@ -4185,6 +4649,12 @@
                     beacon.position.set(cornerX, 4.5, -6);
                     obsMeshGroup.add(beacon);
                     blinkingLights.push(beacon);
+
+                    // Add PointLight to train corner beacons
+                    const beaconLight = new THREE.PointLight(0xffaa00, 3.5, 6.0);
+                    beaconLight.position.set(cornerX, 4.5, -6);
+                    obsMeshGroup.add(beaconLight);
+                    blinkingLights.push(beaconLight);
                 }
 
             } else if (type === obstacleTypes.TRAIN_RAMPED) {
@@ -4416,6 +4886,7 @@
                         const idxB = rotatingBeacons.indexOf(child);
                         if (idxB !== -1) rotatingBeacons.splice(idxB, 1);
                     });
+                    safelyDisposeNode(obs);
                     obstaclesGroup.remove(obs);
                 }
             }
@@ -4423,6 +4894,7 @@
             for (let i = coinsGroup.children.length - 1; i >= 0; i--) {
                 const coin = coinsGroup.children[i];
                 if (coin.position.z > 40) {
+                    safelyDisposeNode(coin);
                     coinsGroup.remove(coin);
                 }
             }
@@ -4430,6 +4902,7 @@
             for (let i = powerupsGroup.children.length - 1; i >= 0; i--) {
                 const pup = powerupsGroup.children[i];
                 if (pup.position.z > 40) {
+                    safelyDisposeNode(pup);
                     powerupsGroup.remove(pup);
                 }
             }
@@ -4581,7 +5054,7 @@
                         if (obs.userData.isRamp) {
                             const relativeZ = pz - oz;
 
-                            if (py >= obs.userData.trainTopY - 0.5) {
+                            if (py >= 2.8 && player.velY <= 0) {
                                 standingOnTrainThisFrame = true;
                                 activeTrainY = obs.userData.trainTopY;
                             } else if (relativeZ >= -9.25 && relativeZ <= -1.75) {
@@ -4592,7 +5065,7 @@
                                 triggerRecoilHit();
                             }
                         } else if (obs.userData.type === obstacleTypes.TRAIN) {
-                            if (py + 0.1 >= 4.2 && player.velY <= 0) {
+                            if (py >= 2.8 && player.velY <= 0) {
                                 standingOnTrainThisFrame = true;
                                 activeTrainY = 4.2;
                             } else {
@@ -4688,6 +5161,7 @@
                     coinMesh.position.z
                 );
             }
+            safelyDisposeNode(coinMesh);
             coinsGroup.remove(coinMesh);
             coins++;
             totalGold++;
@@ -4708,6 +5182,7 @@
         // POWERUP RETRIEVAL ACTION
         function collectPowerup(type, pickupMesh) {
             audio.playPowerup();
+            safelyDisposeNode(pickupMesh);
             powerupsGroup.remove(pickupMesh);
 
             triggerAlert(type.toUpperCase() + ' RECLAIMED!');
@@ -7084,9 +7559,18 @@
 
             blinkingLights.length = 0; 
             rotatingBeacons.length = 0;
-            while(obstaclesGroup.children.length > 0) obstaclesGroup.remove(obstaclesGroup.children[0]);
-            while(coinsGroup.children.length > 0) coinsGroup.remove(coinsGroup.children[0]);
-            while(powerupsGroup.children.length > 0) powerupsGroup.remove(powerupsGroup.children[0]);
+            while(obstaclesGroup.children.length > 0) {
+                safelyDisposeNode(obstaclesGroup.children[0]);
+                obstaclesGroup.remove(obstaclesGroup.children[0]);
+            }
+            while(coinsGroup.children.length > 0) {
+                safelyDisposeNode(coinsGroup.children[0]);
+                coinsGroup.remove(coinsGroup.children[0]);
+            }
+            while(powerupsGroup.children.length > 0) {
+                safelyDisposeNode(powerupsGroup.children[0]);
+                powerupsGroup.remove(powerupsGroup.children[0]);
+            }
             lastObstacleZ = -40;
         }
 
@@ -7194,18 +7678,49 @@
             // CONTROL MENURUINS SCENERY VISIBILITY STATE
             menuRuinsGroup.visible = (gameState === STATE_CINEMATIC || gameState === STATE_COUNTDOWN);
 
+        function isTorchActive() {
+            // Check if currentWeatherState is NIGHT
+            if (currentWeatherState === 'NIGHT') {
+                return true;
+            }
+            // Check if cycle progress is in the night interval (distance intervals)
+            if (typeof distanceTraveled !== 'undefined') {
+                const CYCLE_METERS = 1600;
+                const progress = (distanceTraveled % CYCLE_METERS) / CYCLE_METERS;
+                if (progress >= 0.68 && progress <= 0.92) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
             // ORGANIC FIERY FLICKER EFFECT on pillars, torches, and shrines
             blinkingLights.forEach(light => {
                 if (light) {
                     const flicker = 1.0 + Math.sin(elapsedTime * 15) * 0.3 + Math.cos(elapsedTime * 22) * 0.15;
-                    
+                    const active = isTorchActive() || (gameState === STATE_CINEMATIC);
+
                     if (light instanceof THREE.Mesh) {
-                        light.scale.set(0.9 + flicker * 0.1, 1.0 + flicker * 0.15, 0.9 + flicker * 0.1);
-                        light.material.opacity = 0.5 + flicker * 0.25;
+                        if (active) {
+                            light.scale.set(0.9 + flicker * 0.1, 1.0 + flicker * 0.15, 0.9 + flicker * 0.1);
+                            light.material.opacity = 0.5 + flicker * 0.25;
+                        } else {
+                            light.scale.set(0.001, 0.001, 0.001);
+                            light.material.opacity = 0;
+                        }
                     } else if (light instanceof THREE.PointLight) {
-                        light.intensity = flicker * 3.5;
+                        if (active) {
+                            const peak = light.userData.peakIntensity !== undefined ? light.userData.peakIntensity : 3.5;
+                            light.intensity = flicker * peak;
+                        } else {
+                            light.intensity = 0;
+                        }
                     } else {
-                        light.material.opacity = 0.5 + Math.sin(elapsedTime * 14) * 0.5;
+                        if (active) {
+                            light.material.opacity = 0.5 + Math.sin(elapsedTime * 14) * 0.5;
+                        } else {
+                            light.material.opacity = 0;
+                        }
                     }
                 }
             });
@@ -7570,12 +8085,15 @@
                 const jetpackFovBoost = isJetpackActive ? 18.0 : 0.0;
                 const superDashFovBoost = (isJumpBoosterActive && !isJetpackActive) ? 8.0 : 0.0;
 
-                // 2. Dynamic Turn Squeeze (FOV contracts slightly during rapid lateral turns to emphasize momentum)
+                // 2. Dynamic Relic Zoom Squeeze (-12 deg to emphasize the 10x multiplier boost)
+                const relicFovSqueeze = isRelicActive ? -12.0 : 0.0;
+
+                // 3. Dynamic Turn Squeeze (FOV contracts slightly during rapid lateral turns to emphasize momentum)
                 const targetLaneX = getLaneX(player.targetLane);
                 const turnDelta = Math.abs(targetLaneX - player.currentLaneX);
                 const turnSqueeze = Math.min(6.0, (Math.abs(lateralLagDelta) * 2.5) + (turnDelta * 1.5));
 
-                const targetFov = Math.max(45, Math.min(92, baseFov + jetpackFovBoost + superDashFovBoost - turnSqueeze));
+                const targetFov = Math.max(35, Math.min(92, baseFov + jetpackFovBoost + superDashFovBoost + relicFovSqueeze - turnSqueeze));
                 camera.fov += (targetFov - camera.fov) * 8 * dt;
                 camera.updateProjectionMatrix();
 
@@ -7623,120 +8141,145 @@
             }
         }
 
-        // --- CINEMATIC INTRO: RAVITEJA TECH LOADING ---
-        function runIntro() {
-            const logoEl = document.getElementById('intro-logo');
-            const progressEl = document.getElementById('intro-progress-bar');
-            const statusEl = document.getElementById('intro-status');
-            const introScreen = document.getElementById('intro-screen');
-            const loadingElements = document.getElementById('intro-loading-elements');
-            const titleReveal = document.getElementById('intro-title-reveal');
+        // --- CINEMATIC RUNNER & IRIS-REVEAL INTRO ENGINE ---
+        function revealText(element, targetText, duration = 1000, onComplete) {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+";
+            let start = null;
             
-            const originalText = "RAVITEJA TECH";
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-            let shuffleCount = 0;
-            const maxShuffles = 18;
-            
-            // 1. Shuffling letters animation
-            const shuffleInterval = setInterval(() => {
-                let shuffled = "";
-                for (let i = 0; i < originalText.length; i++) {
-                    if (originalText[i] === " ") {
-                        shuffled += " ";
-                        continue;
-                    }
-                    if (shuffleCount > i * 1.2) {
-                        shuffled += originalText[i];
+            function step(timestamp) {
+                if (!start) start = timestamp;
+                const elapsed = timestamp - start;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                let currentText = "";
+                for (let i = 0; i < targetText.length; i++) {
+                    if (targetText[i] === " ") {
+                        currentText += " ";
+                    } else if (progress > i / targetText.length) {
+                        currentText += targetText[i];
                     } else {
-                        shuffled += chars[Math.floor(Math.random() * chars.length)];
+                        currentText += chars[Math.floor(Math.random() * chars.length)];
                     }
                 }
-                logoEl.textContent = shuffled;
-                shuffleCount++;
-                if (shuffleCount >= maxShuffles) {
-                    clearInterval(shuffleInterval);
-                    logoEl.textContent = originalText;
+                element.textContent = currentText;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    element.textContent = targetText;
+                    if (onComplete) onComplete();
                 }
-            }, 60);
+            }
+            requestAnimationFrame(step);
+        }
 
-            // 2. Generate floating golden CSS sparks for background ambiance
-            const particlesContainer = document.getElementById('intro-particles');
-            if (particlesContainer) {
-                for (let i = 0; i < 24; i++) {
-                    const spark = document.createElement('div');
-                    spark.className = 'intro-spark';
-                    const size = Math.random() * 8 + 4;
-                    spark.style.width = size + 'px';
-                    spark.style.height = size + 'px';
-                    spark.style.left = Math.random() * 100 + 'vw';
-                    spark.style.animationDuration = (Math.random() * 4 + 3) + 's';
-                    spark.style.animationDelay = (Math.random() * 3) + 's';
-                    particlesContainer.appendChild(spark);
+        function runIntro() {
+            const introScreen = document.getElementById('intro-screen');
+            const speedContainer = document.getElementById('intro-speed-container');
+            const runnerBox = document.getElementById('runner-silhouette-box');
+            const textReveal = document.getElementById('intro-text-reveal');
+            
+            const titleEl = document.getElementById('intro-reveal-title');
+            const crownEl = document.getElementById('intro-crown');
+            const badgeEl = document.getElementById('intro-badge');
+            const dividerEl = document.getElementById('intro-divider');
+            const subtitleEl = document.getElementById('intro-subtitle');
+
+            // 1. Generate 3D Speed Tunnel lines radially
+            if (speedContainer) {
+                for (let i = 0; i < 28; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'speed-line';
+                    const angle = (i / 28) * Math.PI * 2 + (Math.random() * 0.2 - 0.1);
+                    const tx = Math.cos(angle) * 350 + 'px';
+                    const ty = Math.sin(angle) * 350 + 'px';
+                    line.style.setProperty('--tx', tx);
+                    line.style.setProperty('--ty', ty);
+                    line.style.transform = `rotate(${angle}rad)`;
+                    line.style.animationDelay = (Math.random() * 0.6) + 's';
+                    speedContainer.appendChild(line);
                 }
             }
 
-            // 3. Progress loader simulation
-            let progress = 0;
-            const loadingPhrases = [
-                "Initializing Engine...",
-                "Loading 3D Temple Courtyard...",
-                "Texturing Sacred Ruins...",
-                "Spawning Chariots...",
-                "Raja is Ready!"
-            ];
-            
-            const progressInterval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 4;
-                if (progress > 100) progress = 100;
-                
-                progressEl.style.width = progress + '%';
-                
-                const phraseIndex = Math.min(Math.floor(progress / 22), loadingPhrases.length - 1);
-                statusEl.textContent = `${loadingPhrases[phraseIndex]} ${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    
-                    // Finish Loading effect
-                    logoEl.classList.add('scale-105', 'duration-500', 'transition-transform');
-                    statusEl.classList.add('text-amber-400');
-                    
-                    setTimeout(() => {
-                        // Smoothly fade out loading progress elements
-                        loadingElements.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-                        
-                        setTimeout(() => {
-                            loadingElements.classList.add('hidden');
-                            
-                            // Make dramatic title reveal element visible
-                            titleReveal.classList.remove('hidden');
-                            
-                            // Play epic drum/whoosh sound cue
-                            if (audio && typeof audio.playJump === 'function') {
-                                audio.playJump(); 
-                            }
-                            
-                            setTimeout(() => {
-                                titleReveal.classList.remove('opacity-0', 'scale-90');
-                                titleReveal.classList.add('opacity-100', 'scale-100');
-                            }, 50);
-                            
-                            // Hold the game title on the stone wall for 1.8 seconds, then fade out the screen
-                            setTimeout(() => {
-                                introScreen.classList.add('opacity-0', 'pointer-events-none');
-                                // Play golden bell sound cue as it clears
-                                if (audio && typeof audio.playCoin === 'function') {
-                                    audio.playCoin(); 
-                                }
-                                setTimeout(() => {
-                                    introScreen.remove(); // Clean memory once completed
-                                    startInstrumentalMusic(); // Launch gorgeous Raga drone soundtrack loop!
-                                }, 1000);
-                            }, 1800);
-                        }, 500);
-                    }, 800);
+            // --- INTRO CINEMATIC CHRONOLOGY TIMELINE ---
+
+            // Play starting running atmosphere whoosh sfx
+            setTimeout(() => {
+                if (audio && typeof audio.playSlide === 'function') {
+                    audio.playSlide();
                 }
-            }, 100);
+            }, 200);
+
+            // Phase 2: Player Zoom Forward & Exit (2.0s)
+            // Zoom the running silhouette into the camera rapidly, then fade it out entirely
+            setTimeout(() => {
+                if (runnerBox) {
+                    runnerBox.style.transition = "transform 600ms cubic-bezier(0.25, 1, 0.5, 1), opacity 500ms ease-out";
+                    runnerBox.style.transform = "scale(3.5)";
+                    runnerBox.style.opacity = "0";
+                }
+                if (speedContainer) {
+                    speedContainer.style.transition = "opacity 400ms ease-out";
+                    speedContainer.style.opacity = "0";
+                }
+
+                // Play epic temple chime as the runner exits and screen goes black
+                if (audio && typeof audio.playCoin === 'function') {
+                    audio.playCoin();
+                }
+            }, 2000);
+
+            // Phase 3: Letters Reveal "RUN RAJA RUN" (after runner has fully exited - 2.8s)
+            setTimeout(() => {
+                if (textReveal) {
+                    textReveal.classList.remove('opacity-0', 'scale-90');
+                    textReveal.classList.add('opacity-100', 'scale-100');
+                }
+                
+                // Unveil ornaments
+                if (crownEl) crownEl.classList.remove('opacity-0');
+                if (badgeEl) badgeEl.classList.remove('opacity-0');
+                if (dividerEl) dividerEl.classList.remove('opacity-0');
+                if (subtitleEl) subtitleEl.classList.remove('opacity-0');
+
+                // Shuffle reveal title
+                if (titleEl) {
+                    revealText(titleEl, "RUN RAJA RUN", 900);
+                }
+                
+                if (audio && typeof audio.playJump === 'function') {
+                    audio.playJump();
+                }
+            }, 2800);
+
+            // Phase 4: Shifting to "RAVITEJA DADI" (4.9s)
+            setTimeout(() => {
+                if (titleEl) {
+                    revealText(titleEl, "RAVITEJA DADI", 1000);
+                }
+                if (subtitleEl) {
+                    subtitleEl.textContent = "MAJESTIC ODYSSEY CREATOR";
+                    subtitleEl.className = "text-yellow-400 font-extrabold uppercase tracking-[0.3em] text-[10px] orbitron animate-pulse";
+                }
+                if (audio && typeof audio.playCoin === 'function') {
+                    audio.playCoin();
+                }
+            }, 4900);
+
+            // Phase 5: Complete Dissolve Fade out (7.0s)
+            setTimeout(() => {
+                if (textReveal) {
+                    textReveal.classList.add('opacity-0', 'scale-110', 'duration-700', 'transition-all');
+                }
+                if (introScreen) {
+                    introScreen.classList.add('opacity-0');
+                }
+                
+                setTimeout(() => {
+                    if (introScreen) introScreen.remove();
+                    startInstrumentalMusic(); // Launch gorgeous Raga drone soundtrack loop!
+                }, 1000);
+            }, 7000);
         }
 
         window.onload = function () {
