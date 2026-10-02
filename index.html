@@ -730,6 +730,15 @@
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.01 2.01C6.48 2.01 2 6.48 2 12.01c0 5.52 4.48 9.99 10.01 9.99 5.52 0 10-4.47 10-9.99 0-5.53-4.48-10-10-10zm4.58 14.41c-.2.33-.61.43-.94.23-2.52-1.54-5.7-1.89-9.44-1.04-.38.09-.76-.15-.85-.53-.09-.38.15-.76.53-.85 4.1-.94 7.62-.55 10.48 1.25.33.2.43.62.22.94zm1.22-2.72c-.25.4-.77.53-1.17.28-2.88-1.77-7.28-2.28-10.69-1.25-.45.14-.93-.12-1.07-.57-.14-.45.12-.93.57-1.07 3.9-1.18 8.76-.61 12.08 2.1.4.25.53.78.28 1.18zm.1-2.87c-3.46-2.06-9.17-2.25-12.49-1.24-.53.16-1.09-.15-1.25-.68-.16-.53.15-1.09.68-1.25 3.82-1.16 10.13-.94 14.13 1.62.48.28.64.9.36 1.38-.28.48-.9.64-1.38.36z"/></svg>
                   <span>Connect Spotify API</span>
                 </button>
+                <div class="mt-1 pt-2 border-t border-white/5 flex flex-col gap-1 text-[9px] text-stone-400 text-left">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold orbitron text-stone-500 uppercase text-[8px]">OAuth Callback URI:</span>
+                    <button id="btn-copy-callback-uri" class="text-[#1DB954] hover:underline font-bold text-[8.5px] cursor-pointer flex items-center gap-1">
+                      <span>📋 Copy URI</span>
+                    </button>
+                  </div>
+                  <code id="display-callback-uri" class="bg-black/60 border border-white/5 px-2 py-1 rounded text-[8.5px] text-[#1DB954] font-mono select-all truncate">https://runrajarun-18.vercel.app/auth/callback</code>
+                </div>
               </div>
             </div>
 
@@ -8672,6 +8681,26 @@
         if (btnSpotifyToggle) btnSpotifyToggle.addEventListener('click', toggleSpotifyPanel);
         if (btnSpotifyClose) btnSpotifyClose.addEventListener('click', toggleSpotifyPanel);
 
+        // Update Displayed Callback URI and Copy action
+        const displayCallbackUri = document.getElementById('display-callback-uri');
+        const btnCopyCallbackUri = document.getElementById('btn-copy-callback-uri');
+        const currentRedirectUri = `${window.location.origin}/auth/callback`;
+        
+        if (displayCallbackUri) {
+            displayCallbackUri.textContent = currentRedirectUri;
+        }
+
+        if (btnCopyCallbackUri) {
+            btnCopyCallbackUri.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(currentRedirectUri);
+                    showCustomizerToast('📋 Callback URI copied to clipboard!');
+                } catch(e) {
+                    showCustomizerToast('URI: ' + currentRedirectUri);
+                }
+            });
+        }
+
         // Spotify OAuth popup connection
         const btnSpotifyLogin = document.getElementById('btn-spotify-login');
         if (btnSpotifyLogin) {
@@ -8730,31 +8759,66 @@
             });
         }
 
-        // Listener for messages from popup window
+        // Helper to handle tokens received from popup (postMessage / BroadcastChannel / Storage)
+        function handleSpotifyOAuthSuccess(tokens) {
+            if (!tokens || !tokens.access_token) return;
+            
+            spotifyAccessToken = tokens.access_token;
+            spotifyRefreshToken = tokens.refresh_token || spotifyRefreshToken;
+            spotifyTokenExpiry = Date.now() + ((tokens.expires_in || 3600) * 1000);
+            
+            localStorage.setItem('spotify_access_token', spotifyAccessToken);
+            if (spotifyRefreshToken) localStorage.setItem('spotify_refresh_token', spotifyRefreshToken);
+            localStorage.setItem('spotify_token_expiry', spotifyTokenExpiry.toString());
+            
+            triggerAlert('🟢 SPOTIFY LINK ESTABLISHED!');
+            audio.playPowerup();
+            
+            // Automatically switch to Spotify Mode
+            setMusicMode('spotify');
+            updateSpotifyUIState();
+        }
+
+        // 1. Listener for messages from popup window (supports vercel.app, run.app, localhost, same origin)
         window.addEventListener('message', (event) => {
             const origin = event.origin;
-            if (!origin.endsWith('.run.app') && !origin.includes('localhost')) {
+            const isAllowed = 
+                origin === window.location.origin ||
+                origin.endsWith('.run.app') ||
+                origin.endsWith('.vercel.app') ||
+                origin.includes('localhost') ||
+                origin.includes('127.0.0.1');
+
+            if (!isAllowed) {
                 return;
             }
             
             if (event.data && event.data.type === 'OAUTH_AUTH_SUCCESS') {
-                const tokens = event.data.tokens;
-                if (tokens) {
-                    spotifyAccessToken = tokens.access_token;
-                    spotifyRefreshToken = tokens.refresh_token;
-                    spotifyTokenExpiry = Date.now() + (tokens.expires_in * 1000);
-                    
-                    localStorage.setItem('spotify_access_token', spotifyAccessToken);
-                    localStorage.setItem('spotify_refresh_token', spotifyRefreshToken);
-                    localStorage.setItem('spotify_token_expiry', spotifyTokenExpiry.toString());
-                    
-                    triggerAlert('🟢 SPOTIFY LINK ESTABLISHED!');
-                    audio.playPowerup();
-                    
-                    // Automatically switch to Spotify Mode
-                    setMusicMode('spotify');
-                    updateSpotifyUIState();
-                }
+                handleSpotifyOAuthSuccess(event.data.tokens);
+            }
+        });
+
+        // 2. BroadcastChannel listener for robust cross-tab/cross-window reception
+        try {
+            if ('BroadcastChannel' in window) {
+                const oauthChannel = new BroadcastChannel('spotify_oauth_channel');
+                oauthChannel.onmessage = (event) => {
+                    if (event.data && event.data.type === 'OAUTH_AUTH_SUCCESS') {
+                        handleSpotifyOAuthSuccess(event.data.tokens);
+                    }
+                };
+            }
+        } catch(e) {}
+
+        // 3. Storage event listener (syncs across browser tabs instantly)
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'spotify_oauth_result' && event.newValue) {
+                try {
+                    const data = JSON.parse(event.newValue);
+                    if (data && data.type === 'OAUTH_AUTH_SUCCESS') {
+                        handleSpotifyOAuthSuccess(data.tokens);
+                    }
+                } catch(e) {}
             }
         });
 

@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', true);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,8 +21,9 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
 
 // 1. Get Spotify Authorization URL
 app.get('/api/spotify/url', (req, res) => {
-  const origin = req.query.origin || `http://localhost:${PORT}`;
-  const redirectUri = `${origin}/auth/callback`;
+  const origin = req.query.origin || `${req.protocol}://${req.get('host')}` || `http://localhost:${PORT}`;
+  const cleanOrigin = origin.replace(/\/+$/, '');
+  const redirectUri = req.query.redirect_uri || `${cleanOrigin}/auth/callback`;
   
   if (!SPOTIFY_CLIENT_ID) {
     return res.status(400).json({ 
@@ -50,25 +52,66 @@ app.get('/api/spotify/url', (req, res) => {
   });
 
   const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-  res.json({ url: authUrl });
+  res.json({ url: authUrl, redirectUri });
 });
 
-// 2. Spotify OAuth Callback Page Handler
+// 2. Direct Token Exchange Endpoint
+app.post('/api/spotify/exchange', async (req, res) => {
+  const { code, redirect_uri } = req.body;
+  if (!code) {
+    return res.status(400).json({ error: 'missing_code', message: 'Authorization code is required.' });
+  }
+
+  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+    return res.status(500).json({ error: 'missing_credentials', message: 'Spotify credentials missing on server.' });
+  }
+
+  const origin = req.protocol + '://' + req.get('host');
+  const redirectUri = redirect_uri || `${origin}/auth/callback`;
+
+  try {
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: code.toString(),
+        redirect_uri: redirectUri
+      })
+    });
+
+    const tokens = await tokenResponse.json();
+    if (!tokenResponse.ok) {
+      return res.status(tokenResponse.status).json(tokens);
+    }
+
+    res.json(tokens);
+  } catch (err) {
+    console.error('Error during token exchange:', err);
+    res.status(500).json({ error: 'server_error', message: err.message });
+  }
+});
+
+// 3. Spotify OAuth Callback Page Handler
 app.get(['/auth/callback', '/auth/callback/'], async (req, res) => {
   const { code, error } = req.query;
   const origin = req.protocol + '://' + req.get('host');
-  const redirectUri = `${origin}/auth/callback`;
+  const redirectUri = req.query.redirect_uri || `${origin}/auth/callback`;
 
   if (error) {
     return res.send(renderAuthResultPage(false, `Spotify Authorization Error: ${error}`));
   }
 
   if (!code) {
-    return res.send(renderAuthResultPage(false, 'No authorization code received from Spotify.'));
+    // If accessed statically without query parameters, serve the static html file
+    return res.sendFile(join(__dirname, 'auth', 'callback', 'index.html'));
   }
 
   if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
-    return res.send(renderAuthResultPage(false, 'Spotify API credentials (SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET) are missing on the server. Please add them to your environment variables!'));
+    return res.send(renderAuthResultPage(false, 'Spotify API credentials (SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET) are missing on the server. Please configure them in environment variables.'));
   }
 
   try {
@@ -91,7 +134,7 @@ app.get(['/auth/callback', '/auth/callback/'], async (req, res) => {
       return res.send(renderAuthResultPage(false, tokens.error_description || tokens.error || 'Failed to exchange code for access tokens.'));
     }
 
-    // Return the successful page, passing the tokens to the opener via postMessage
+    // Return the successful page, passing the tokens to the opener via postMessage & storage
     return res.send(renderAuthResultPage(true, null, tokens));
 
   } catch (err) {
@@ -184,22 +227,51 @@ function renderAuthResultPage(success, errorMessage = null, tokens = null) {
             </div>
             <p class="text-stone-400 text-xs">This window will close automatically in a moment. Enjoy the ancient vibes and supersonic beats!</p>
             <script>
+              const tokensData = ${tokensJson};
+              const payload = {
+                type: 'OAUTH_AUTH_SUCCESS', 
+                tokens: tokensData,
+                timestamp: Date.now()
+              };
+
+              // 1. PostMessage
+              try {
+                if (window.opener) {
+                  window.opener.postMessage(payload, '*');
+                }
+              } catch(e) {
+                console.warn('PostMessage error:', e);
+              }
+
+              // 2. BroadcastChannel
+              try {
+                if ('BroadcastChannel' in window) {
+                  const bc = new BroadcastChannel('spotify_oauth_channel');
+                  bc.postMessage(payload);
+                }
+              } catch(e) {}
+
+              // 3. LocalStorage fallback
+              try {
+                localStorage.setItem('spotify_oauth_result', JSON.stringify(payload));
+                if (tokensData && tokensData.access_token) {
+                  localStorage.setItem('spotify_access_token', tokensData.access_token);
+                  if (tokensData.refresh_token) localStorage.setItem('spotify_refresh_token', tokensData.refresh_token);
+                  if (tokensData.expires_in) localStorage.setItem('spotify_token_expiry', (Date.now() + (tokensData.expires_in * 1000)).toString());
+                }
+              } catch(e) {}
+
               setTimeout(() => {
                 try {
                   if (window.opener) {
-                    window.opener.postMessage({ 
-                      type: 'OAUTH_AUTH_SUCCESS', 
-                      tokens: ${tokensJson}
-                    }, '*');
                     window.close();
                   } else {
                     document.getElementById('manual-btn').classList.remove('hidden');
                   }
                 } catch (e) {
-                  console.error('PostMessage error:', e);
                   document.getElementById('manual-btn').classList.remove('hidden');
                 }
-              }, 1200);
+              }, 1400);
             </script>
           </div>
         ` : `

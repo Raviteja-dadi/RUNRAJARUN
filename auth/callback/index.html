@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Connection - Run Raja Run</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background-color: #0c0501; }
+    .orbitron { font-family: 'Orbitron', sans-serif; }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(29, 185, 84, 0.4), inset 0 0 15px rgba(29, 185, 84, 0.2); }
+      50% { box-shadow: 0 0 30px rgba(29, 185, 84, 0.8), inset 0 0 25px rgba(29, 185, 84, 0.4); }
+    }
+    .spotify-glow { animation: pulse-glow 2.5s infinite ease-in-out; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-stone-200 p-4 bg-gradient-to-b from-[#0c0501] via-[#150a02] to-[#0c0501]">
+  
+  <div class="max-w-md w-full border border-amber-500/30 bg-stone-950/95 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
+    <!-- Ambient background glows -->
+    <div class="absolute -top-24 -left-24 w-48 h-48 bg-[#1DB954]/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Header & Logo -->
+    <div class="flex flex-col items-center gap-2 relative z-10">
+      <div class="w-16 h-16 rounded-full bg-stone-900 border-2 border-[#1DB954] flex items-center justify-center text-3xl text-[#1DB954] spotify-glow">
+        🎵
+      </div>
+      <h1 class="text-xl md:text-2xl font-black orbitron uppercase tracking-wider text-white mt-2">
+        Run Raja Run
+      </h1>
+      <p class="text-xs font-bold uppercase tracking-widest text-[#1DB954] orbitron">Spotify Realm Synchronizer</p>
+      <div class="w-16 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+    </div>
+
+    <!-- Dynamic Status Container -->
+    <div id="status-container" class="relative z-10 space-y-4">
+      <div class="bg-stone-900/80 border border-stone-800 rounded-xl p-4 text-stone-300 flex items-center justify-center gap-3">
+        <svg class="animate-spin h-5 w-5 text-[#1DB954]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span id="status-text" class="text-xs font-bold orbitron uppercase tracking-wider">Authorizing Spotify Token...</span>
+      </div>
+    </div>
+
+    <!-- Recovery / Action Controls -->
+    <div id="action-controls" class="hidden relative z-10 space-y-2 pt-2">
+      <a id="return-btn" href="/" class="block w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold py-3 rounded-xl orbitron tracking-wider text-xs transition-all shadow-lg active:scale-95">
+        ⚡ RETURN TO RUN RAJA RUN
+      </a>
+      <button onclick="window.close()" class="w-full bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 py-2 rounded-xl orbitron text-[10px] font-bold transition-all">
+        Close Window
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (async function processOAuthCallback() {
+      const statusText = document.getElementById('status-text');
+      const statusContainer = document.getElementById('status-container');
+      const actionControls = document.getElementById('action-controls');
+      const returnBtn = document.getElementById('return-btn');
+
+      // Set intelligent return link
+      if (window.location.origin) {
+        returnBtn.href = window.location.origin;
+      }
+
+      // 1. Parse query parameters and hash fragments
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+      const code = urlParams.get('code');
+      const error = urlParams.get('error');
+      const accessToken = hashParams.get('access_token') || urlParams.get('access_token');
+      const state = urlParams.get('state');
+
+      // Broadcaster helper for ultra-reliable cross-window communication
+      function broadcastAuthSuccess(tokens) {
+        const payload = {
+          type: 'OAUTH_AUTH_SUCCESS',
+          tokens: tokens,
+          timestamp: Date.now()
+        };
+
+        // 1. PostMessage to opener
+        try {
+          if (window.opener) {
+            window.opener.postMessage(payload, '*');
+          }
+        } catch (e) {
+          console.warn('Opener postMessage error:', e);
+        }
+
+        // 2. BroadcastChannel
+        try {
+          if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('spotify_oauth_channel');
+            bc.postMessage(payload);
+          }
+        } catch (e) {
+          console.warn('BroadcastChannel error:', e);
+        }
+
+        // 3. LocalStorage event triggers across all same-origin tabs
+        try {
+          localStorage.setItem('spotify_oauth_result', JSON.stringify(payload));
+          // Store directly in localStorage as standard tokens
+          if (tokens.access_token) {
+            localStorage.setItem('spotify_access_token', tokens.access_token);
+          }
+          if (tokens.refresh_token) {
+            localStorage.setItem('spotify_refresh_token', tokens.refresh_token);
+          }
+          if (tokens.expires_in) {
+            localStorage.setItem('spotify_token_expiry', (Date.now() + (tokens.expires_in * 1000)).toString());
+          }
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+      }
+
+      function showSuccessUI(message = 'Spotify Connected Successfully!') {
+        statusContainer.innerHTML = `
+          <div class="bg-emerald-950/60 border border-[#1DB954] rounded-xl p-4 text-emerald-300 space-y-2">
+            <span class="text-3xl block">✨</span>
+            <p class="font-black text-sm orbitron uppercase tracking-wider text-[#1DB954]">${message}</p>
+            <p class="text-xs text-stone-300">Run Raja Run audio link is established. Returning to the temple run...</p>
+          </div>
+        `;
+        actionControls.classList.remove('hidden');
+
+        setTimeout(() => {
+          try {
+            if (window.opener) {
+              window.close();
+            }
+          } catch(e) {}
+        }, 1500);
+      }
+
+      function showErrorUI(errorMessage) {
+        statusContainer.innerHTML = `
+          <div class="bg-red-950/60 border border-red-500/60 rounded-xl p-4 text-red-200 text-left space-y-2">
+            <div class="flex items-center gap-2 font-bold text-red-400">
+              <span class="text-lg">⚠️</span>
+              <span class="orbitron uppercase text-xs">Authorization Error</span>
+            </div>
+            <p class="text-xs text-stone-300 font-medium leading-relaxed">${errorMessage}</p>
+          </div>
+          <div class="bg-stone-900/60 border border-amber-500/20 rounded-xl p-3 text-left text-xs space-y-1">
+            <span class="text-amber-400 font-bold orbitron block">🔧 Configuration Tip:</span>
+            <p class="text-stone-400 text-[11px]">Make sure your Spotify Developer App has this Redirect URI added:</p>
+            <code class="block bg-black/50 p-1.5 rounded text-[10px] text-[#1DB954] font-mono select-all break-all">${window.location.origin}/auth/callback</code>
+          </div>
+        `;
+        actionControls.classList.remove('hidden');
+      }
+
+      // Check for errors
+      if (error) {
+        showErrorUI(`Spotify returned error: ${error}`);
+        return;
+      }
+
+      // Case 1: Direct Implicit Hash Token
+      if (accessToken) {
+        const expiresIn = parseInt(hashParams.get('expires_in') || '3600', 10);
+        const tokens = {
+          access_token: accessToken,
+          token_type: hashParams.get('token_type') || 'Bearer',
+          expires_in: expiresIn
+        };
+        broadcastAuthSuccess(tokens);
+        showSuccessUI();
+        return;
+      }
+
+      // Case 2: Authorization Code
+      if (code) {
+        statusText.textContent = 'Exchanging authorization code...';
+        
+        // Check if PKCE code_verifier is saved
+        const codeVerifier = sessionStorage.getItem('spotify_pkce_verifier') || localStorage.getItem('spotify_pkce_verifier');
+        const clientId = sessionStorage.getItem('spotify_pkce_client_id') || localStorage.getItem('spotify_pkce_client_id');
+
+        if (codeVerifier && clientId) {
+          // Perform PKCE token exchange directly with Spotify
+          try {
+            const redirectUri = window.location.origin + '/auth/callback';
+            const res = await fetch('https://accounts.spotify.com/api/token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({
+                client_id: clientId,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: redirectUri,
+                code_verifier: codeVerifier
+              })
+            });
+
+            const tokens = await res.json();
+            if (tokens.access_token) {
+              sessionStorage.removeItem('spotify_pkce_verifier');
+              broadcastAuthSuccess(tokens);
+              showSuccessUI();
+              return;
+            } else {
+              throw new Error(tokens.error_description || tokens.error || 'PKCE Token exchange failed');
+            }
+          } catch (e) {
+            console.warn('PKCE exchange error, trying backend:', e);
+          }
+        }
+
+        // Try server-side exchange endpoint (/api/spotify/exchange or /api/spotify/callback)
+        try {
+          const redirectUri = window.location.origin + '/auth/callback';
+          const exchangeRes = await fetch('/api/spotify/exchange', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, redirect_uri: redirectUri })
+          });
+
+          if (exchangeRes.ok) {
+            const tokens = await exchangeRes.json();
+            if (tokens.access_token) {
+              broadcastAuthSuccess(tokens);
+              showSuccessUI();
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Backend exchange error:', e);
+        }
+
+        // If backend exchange endpoint is not active or this was rendered statically,
+        // broadcast the code directly so the parent window or receiver can process it
+        broadcastAuthSuccess({ code: code });
+        showSuccessUI('Code Verified! Connecting Player...');
+        return;
+      }
+
+      // No code or token found in URL
+      showErrorUI('No authorization code or token was found in the URL. Please launch the connection from Run Raja Run.');
+    })();
+  </script>
+</body>
+</html>
