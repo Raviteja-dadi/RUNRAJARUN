@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '';
+  const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '2b238a62a8c44430932fe1ea78e01477';
   
   if (!SPOTIFY_CLIENT_ID) {
     return res.status(400).json({ 
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
   const origin = req.query.origin || 'https://runrajarun-18.vercel.app';
   const cleanOrigin = origin.replace(/\/+$/, '');
-  const redirectUri = `${cleanOrigin}/auth/callback`;
+  const redirectUri = req.query.redirect_uri || 'https://runrajarun-18.vercel.app/auth/callback';
 
   const scopes = [
     'user-read-playback-state',

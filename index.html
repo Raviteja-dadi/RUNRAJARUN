@@ -8681,53 +8681,109 @@
         if (btnSpotifyToggle) btnSpotifyToggle.addEventListener('click', toggleSpotifyPanel);
         if (btnSpotifyClose) btnSpotifyClose.addEventListener('click', toggleSpotifyPanel);
 
+        // Helper for generating cryptographic PKCE code_verifier and code_challenge
+        function generateRandomString(length) {
+            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+            const values = crypto.getRandomValues(new Uint8Array(length));
+            return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+        }
+
+        async function generateCodeChallenge(codeVerifier) {
+            const data = new TextEncoder().encode(codeVerifier);
+            const digest = await window.crypto.subtle.digest('SHA-256', data);
+            return btoa(String.fromCharCode(...new Uint8Array(digest)))
+                .replace(/=/g, '')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_');
+        }
+
+        async function initiateSpotifyPKCEAuth(clientId, redirectUri) {
+            const verifier = generateRandomString(64);
+            const challenge = await generateCodeChallenge(verifier);
+            
+            sessionStorage.setItem('spotify_pkce_verifier', verifier);
+            sessionStorage.setItem('spotify_pkce_client_id', clientId);
+            localStorage.setItem('spotify_pkce_verifier', verifier);
+            localStorage.setItem('spotify_pkce_client_id', clientId);
+
+            const scopes = [
+                'user-read-playback-state',
+                'user-modify-playback-state',
+                'user-read-currently-playing',
+                'streaming',
+                'user-read-email',
+                'user-read-private',
+                'playlist-read-private',
+                'playlist-read-collaborative'
+            ].join(' ');
+
+            const params = new URLSearchParams({
+                client_id: clientId,
+                response_type: 'code',
+                redirect_uri: redirectUri,
+                scope: scopes,
+                code_challenge_method: 'S256',
+                code_challenge: challenge,
+                show_dialog: 'true'
+            });
+
+            const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
+            const width = 500, height = 700;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            window.open(authUrl, 'spotify_oauth_popup', `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`);
+        }
+
         // Update Displayed Callback URI and Copy action
         const displayCallbackUri = document.getElementById('display-callback-uri');
         const btnCopyCallbackUri = document.getElementById('btn-copy-callback-uri');
-        const currentRedirectUri = `${window.location.origin}/auth/callback`;
-        
+        // Default configured Spotify App credentials
+        const DEFAULT_SPOTIFY_CLIENT_ID = '2b238a62a8c44430932fe1ea78e01477';
+        const vercelRedirectUri = 'https://runrajarun-18.vercel.app/auth/callback';
+
         if (displayCallbackUri) {
-            displayCallbackUri.textContent = currentRedirectUri;
+            displayCallbackUri.textContent = vercelRedirectUri;
         }
 
         if (btnCopyCallbackUri) {
             btnCopyCallbackUri.addEventListener('click', async () => {
                 try {
-                    await navigator.clipboard.writeText(currentRedirectUri);
-                    showCustomizerToast('📋 Callback URI copied to clipboard!');
+                    await navigator.clipboard.writeText(vercelRedirectUri);
+                    showCustomizerToast('📋 Copied: ' + vercelRedirectUri);
                 } catch(e) {
-                    showCustomizerToast('URI: ' + currentRedirectUri);
+                    showCustomizerToast('URI: ' + vercelRedirectUri);
                 }
             });
         }
 
-        // Spotify OAuth popup connection
+        // Exact Spotify Authorization URL configured for Run Raja Run
+        const EXACT_SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/en/authorize?client_id=2b238a62a8c44430932fe1ea78e01477&response_type=code&redirect_uri=https%3A%2F%2Frunrajarun-18.vercel.app%2Fauth%2Fcallback&scope=user-read-playback-state+user-modify-playback-state+user-read-currently-playing+streaming+user-read-email+user-read-private+playlist-read-private+playlist-read-collaborative&show_dialog=true';
+
+        // Spotify OAuth popup / direct connection
         const btnSpotifyLogin = document.getElementById('btn-spotify-login');
         if (btnSpotifyLogin) {
-            btnSpotifyLogin.addEventListener('click', async () => {
+            btnSpotifyLogin.addEventListener('click', () => {
                 try {
-                    btnSpotifyLogin.disabled = true;
-                    btnSpotifyLogin.innerHTML = `<span>⏳ Requesting Link...</span>`;
+                    const width = 500, height = 700;
+                    const left = (window.innerWidth - width) / 2;
+                    const top = (window.innerHeight - height) / 2;
                     
-                    const originUrl = encodeURIComponent(window.location.origin);
-                    const res = await fetch(`/api/spotify/url?origin=${originUrl}`);
-                    const data = await res.json();
-                    
-                    if (data.url) {
-                        const width = 500, height = 700;
-                        const left = (window.innerWidth - width) / 2;
-                        const top = (window.innerHeight - height) / 2;
-                        
-                        window.open(data.url, 'spotify_oauth_popup', `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`);
+                    // Open the exact authorization URL in popup
+                    const popup = window.open(
+                        EXACT_SPOTIFY_AUTH_URL, 
+                        'spotify_oauth_popup', 
+                        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=yes,location=yes`
+                    );
+
+                    // Fallback to direct redirect if popup was blocked by browser
+                    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                        window.location.href = EXACT_SPOTIFY_AUTH_URL;
                     } else {
-                        showCustomizerToast('❌ Spotify Server credentials not configured yet!');
-                        btnSpotifyLogin.disabled = false;
-                        btnSpotifyLogin.innerHTML = `<span>Connect Spotify API</span>`;
+                        showCustomizerToast('🎵 Connecting to Spotify Realm...');
                     }
                 } catch(e) {
-                    showCustomizerToast('❌ Failed to connect Spotify endpoint!');
-                    btnSpotifyLogin.disabled = false;
-                    btnSpotifyLogin.innerHTML = `<span>Connect Spotify API</span>`;
+                    console.error('Spotify redirect error:', e);
+                    window.location.href = EXACT_SPOTIFY_AUTH_URL;
                 }
             });
         }
